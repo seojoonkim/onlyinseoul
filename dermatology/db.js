@@ -28,8 +28,8 @@ const DB = {
             { name: "올리지오", brand: "Solta Medical", mechanism: "차세대 단극성 RF", target: ["탄력", "리프팅", "주름"], duration: "1~2년", downtime: "없음", pain: 2, sessions: "1회", price: "150~350만원", note: "최신" },
             { name: "튠페이스", brand: "루트로닉", mechanism: "양극성 RF + 마사지", target: ["탄력", "부기", "림프순환"], duration: "시술 직후~3개월", downtime: "없음", pain: 1, sessions: "주 1~2회, 10회", price: "10~20만원/회", note: "관리형" },
             { name: "버츄 RF", brand: "Solta Medical", mechanism: "마이크로니들 RF로 진피 직접 자극", target: ["흉터", "모공", "탄력"], duration: "1년 이상", downtime: "2~5일", pain: 3, sessions: "3~5회", price: "30~50만원/회", note: "" },
-            { name: "세르프", brand: "Cynosure/루트로닉", mechanism: "6.78MHz+2MHz 듀얼 고주파, 진피+지방층 동시", target: ["리프팅", "타이트닝", "턱선"], duration: "6개월~1년", downtime: "없음", pain: 1.5, sessions: "1회 600샷", price: "80~150만원", note: "2024신장비 마취불필요" },
-            { name: "볼뉴머", brand: "Classys", mechanism: "6.78MHz 단극성 고주파, 써마지 대안", target: ["탄력", "주름", "리프팅"], duration: "1~2년", downtime: "없음", pain: 2, sessions: "연1회", price: "80~150만원", note: "국산써마지대안" },
+            { name: "세르프", brand: "Cynosure/루트로닉", mechanism: "6.78MHz+2MHz 듀얼 고주파, 진피+지방층 동시", target: ["리프팅", "타이트닝", "턱선"], duration: "6개월~1년", downtime: "없음", pain: 1.5, sessions: "1회 600샷", price: "80~150만원", note: "2024신장비" },
+            { name: "볼뉴머", brand: "Classys", mechanism: "6.78MHz 단극성 고주파, 써마지 대안", target: ["탄력", "주름", "리프팅"], duration: "1~2년", downtime: "없음", pain: 2, sessions: "연1회", price: "80~150만원", note: "국산" },
             { name: "덴써티", brand: "Lutronic", mechanism: "단극성+양극성 RF 복합", target: ["탄력", "리프팅", "피부결"], duration: "6개월~1년", downtime: "없음", pain: 2, sessions: "3~6개월간격", price: "50~100만원", note: "이영애모델" },
             { name: "쿨페이즈", brand: "Classys", mechanism: "모노폴라RF + 실시간 냉각", target: ["탄력", "리프팅", "주름"], duration: "6개월~1년", downtime: "없음", pain: 1.5, sessions: "1회", price: "60~120만원", note: "하지원모델" }
           ]
@@ -73,9 +73,8 @@ const DB = {
           treatments: [
             { name: "엠페이스", brand: "BTL", mechanism: "HIFES로 안면 근육 선택적 자극", target: ["이마주름", "눈가", "턱선"], duration: "6개월~1년", downtime: "없음", pain: 1, sessions: "4회 (주 1회)", price: "50~80만원/회", note: "근육강화" },
             { name: "엠스컬프 페이스", brand: "BTL", mechanism: "HIFEM으로 표정근 강화", target: ["탄력", "리프팅"], duration: "6개월", downtime: "없음", pain: 1, sessions: "4~6회", price: "40~60만원/회", note: "" },
-            { name: "티타늄 리프팅", brand: "Cutera", mechanism: "755+810+1064nm 3파장, STACK/SHR 듀얼", target: ["리프팅", "타이트닝", "톤업", "심부볼"], duration: "3~6개월", downtime: "없음", pain: 2, sessions: "2~4주간격 3~5회", price: "30~60만원/회", note: "설인아모델 즉각효과" },
-            { name: "온다", brand: "DEKA", mechanism: "마이크로웨이브로 지방+콜라겐 동시 자극", target: ["지방감소", "탄력", "셀룰라이트"], duration: "6개월~1년", downtime: "없음", pain: 2, sessions: "3~4회", price: "50~100만원/회", note: "마이크로웨이브" },
-            { name: "리투오", brand: "Viora", mechanism: "CORE 기술 멀티RF, 3개 주파수 동시 조사", target: ["리프팅", "탄력", "셀룰라이트", "바디"], duration: "6개월~1년", downtime: "없음", pain: 1.5, sessions: "6~8회", price: "30~50만원/회", note: "멀티RF" }
+            { name: "티타늄 리프팅", brand: "Cutera", mechanism: "755+810+1064nm 3파장, STACK/SHR 듀얼", target: ["리프팅", "타이트닝", "톤업"], duration: "3~6개월", downtime: "없음", pain: 2, sessions: "3~5회", price: "30~60만원/회", note: "설인아모델" },
+            { name: "온다", brand: "DEKA", mechanism: "마이크로웨이브로 지방+콜라겐 자극", target: ["지방감소", "탄력"], duration: "6개월~1년", downtime: "없음", pain: 2, sessions: "3~4회", price: "50~100만원/회", note: "마이크로웨이브" }
           ]
         }
       ]
@@ -93,10 +92,11 @@ const DB = {
             { name: "리쥬란 HB", brand: "Pharmaresearch", mechanism: "PN + 히알루론산", target: ["보습", "재생", "윤기"], duration: "3~6개월", downtime: "1~2일", pain: 2, sessions: "3~4회", price: "15~25만원/회", note: "보습강화" },
             { name: "리쥬란 턴오버", brand: "Pharmaresearch", mechanism: "고농도 PN으로 턴오버 촉진", target: ["노화피부", "탄력", "재생"], duration: "6개월~1년", downtime: "2~3일", pain: 2.5, sessions: "3~4회", price: "20~35만원/회", note: "고농도" },
             { name: "플라센텍스", brand: "다양", mechanism: "PDRN 주사로 조직 재생", target: ["재생", "상처", "탄력"], duration: "3~6개월", downtime: "1~2일", pain: 2, sessions: "3~5회", price: "8~15만원/회", note: "PDRN" },
-            { name: "리쥬란 HB 플러스", brand: "Pharmaresearch", mechanism: "PN+리도카인 함유, 통증 53% 감소", target: ["재생", "보습", "탄력"], duration: "6개월", downtime: "1일", pain: 1.5, sessions: "3~4회", price: "15~25만원/회", note: "2024신제품" },
-            { name: "스킨바이브", brand: "Allergan", mechanism: "FDA승인 HA 스킨부스터, 피부 수화", target: ["보습", "광채", "피부결"], duration: "6개월", downtime: "1일", pain: 2, sessions: "1회", price: "30~50만원", note: "FDA승인" },
-            { name: "135 스킨부스터", brand: "다양", mechanism: "135개 영양성분 복합 주입", target: ["칙칙함", "피부결", "톤업"], duration: "3~6개월", downtime: "1일", pain: 2, sessions: "3~4회", price: "15~25만원/회", note: "복합영양" },
-            { name: "뉴라덤", brand: "Medytox", mechanism: "57가지 성분 복합", target: ["재생", "탄력", "트러블"], duration: "3~6개월", downtime: "1일", pain: 2, sessions: "3~4회", price: "15~25만원/회", note: "57성분" }
+            { name: "스킨바이브", brand: "Allergan", mechanism: "FDA승인 HA 스킨부스터", target: ["보습", "광채", "피부결"], duration: "6개월", downtime: "1일", pain: 2, sessions: "1회", price: "30~50만원", note: "FDA승인" },
+            { name: "뉴라덤", brand: "Medytox", mechanism: "57가지 성분 복합", target: ["재생", "탄력", "트러블"], duration: "3~6개월", downtime: "1일", pain: 2, sessions: "3~4회", price: "15~25만원/회", note: "57성분" },
+            { name: "리투오", brand: "hADM", mechanism: "동종진피(인체유래 콜라겐+엘라스틴) 주입", target: ["탄력", "주름", "재생", "보습"], duration: "3~6개월", downtime: "없음~1일", pain: 2, sessions: "3~4회", price: "20~40만원/회", note: "인체유래" },
+            { name: "뉴클레오필", brand: "Promoitalia", mechanism: "PN 바이오스티뮬레이터, 세포재생", target: ["재생", "탄력", "볼륨"], duration: "6개월~1년", downtime: "1~2일", pain: 2, sessions: "2~3회", price: "30~50만원/회", note: "유럽인기" },
+            { name: "플루얄 실크", brand: "Pluryal", mechanism: "HA+PN 복합 스킨부스터", target: ["보습", "재생", "광채"], duration: "6개월", downtime: "1일", pain: 2, sessions: "2~3회", price: "25~40만원/회", note: "HA+PN" }
           ]
         },
         {
@@ -116,8 +116,8 @@ const DB = {
             { name: "ASCE+ 엑소좀", brand: "ExoCoBio", mechanism: "줄기세포 유래 엑소좀으로 세포간 신호전달", target: ["재생", "탄력", "홍조", "안티에이징"], duration: "3~6개월", downtime: "없음~1일", pain: 1.5, sessions: "4~6회", price: "20~50만원/회", note: "줄기세포유래" },
             { name: "엑소좀 MTS", brand: "다양", mechanism: "마이크로니들링 + 엑소좀", target: ["재생", "흉터", "모공"], duration: "3~6개월", downtime: "1~2일", pain: 2, sessions: "4~6회", price: "20~40만원/회", note: "" },
             { name: "ASCE+ 샤이닝", brand: "ExoCoBio", mechanism: "미백 특화 엑소좀", target: ["미백", "톤업", "색소"], duration: "3~6개월", downtime: "없음", pain: 1.5, sessions: "4~6회", price: "20~50만원/회", note: "미백특화" },
-
-            { name: "세렉소", brand: "에이바이오머티리얼즈", mechanism: "식물유래 엑소좀(병풀,인삼), 포텐자 병합", target: ["재생", "장벽강화", "홍반완화"], duration: "3~6개월", downtime: "1일", pain: 2, sessions: "3~4회", price: "15~30만원/회", note: "식물엑소좀" }
+            { name: "세렉소", brand: "에이바이오머티리얼즈", mechanism: "식물유래 엑소좀(병풀,인삼)", target: ["재생", "장벽강화", "홍반"], duration: "3~6개월", downtime: "1일", pain: 2, sessions: "3~4회", price: "15~30만원/회", note: "식물엑소좀" },
+            { name: "로리앙 엘레멘트", brand: "중헌제약", mechanism: "글루타치온+비타민C+트라넥삼산+나이아신아마이드", target: ["미백", "기미", "색소"], duration: "3~6개월", downtime: "없음", pain: 1.5, sessions: "3~5회", price: "30~40만원/회", note: "미백4종" }
           ]
         },
         {
@@ -128,7 +128,9 @@ const DB = {
             { name: "샤넬주사", brand: "Filorga NCTF", mechanism: "HA + 비타민 + 아미노산 55종", target: ["윤기", "탄력", "영양"], duration: "2~4개월", downtime: "1~2일", pain: 2, sessions: "3~4회", price: "20~40만원/회", note: "멀티비타민" },
             { name: "프로파일로", brand: "IBSA", mechanism: "고순도 HA가 BAP포인트에서 확산", target: ["탄력", "처진피부", "리프팅"], duration: "6개월~1년", downtime: "1~2일", pain: 2.5, sessions: "2회", price: "30~60만원/회", note: "BAP테크닉" },
             { name: "볼벨라 스킨", brand: "Allergan", mechanism: "쥬비덤 계열 스킨부스터용 HA", target: ["보습", "잔주름"], duration: "6~9개월", downtime: "1~2일", pain: 2, sessions: "1~2회", price: "25~40만원/회", note: "" },
-            { name: "레스틸렌 스킨부스터", brand: "Galderma", mechanism: "NASHA 기술 미세 HA", target: ["보습", "윤기", "탄력"], duration: "6개월", downtime: "1~2일", pain: 2, sessions: "3회", price: "20~35만원/회", note: "" }
+            { name: "레스틸렌 스킨부스터", brand: "Galderma", mechanism: "NASHA 기술 미세 HA", target: ["보습", "윤기", "탄력"], duration: "6개월", downtime: "1~2일", pain: 2, sessions: "3회", price: "20~35만원/회", note: "" },
+            { name: "벨로테로 리바이브", brand: "Merz", mechanism: "HA+글리세린 스킨부스터", target: ["보습", "광채", "물광"], duration: "6개월", downtime: "1~2일", pain: 2, sessions: "2~3회", price: "25~40만원/회", note: "글리세린함유" },
+            { name: "필로르가 135", brand: "Filorga", mechanism: "HA+비타민+아미노산 135성분", target: ["영양", "윤기", "탄력"], duration: "2~4개월", downtime: "1~2일", pain: 2, sessions: "3~4회", price: "20~40만원/회", note: "샤넬주사" }
           ]
         },
         {
@@ -185,7 +187,8 @@ const DB = {
           treatments: [
             { name: "루비레이저", brand: "다양", mechanism: "694nm 멜라닌 선택적 흡수", target: ["오타모반", "깊은색소", "문신"], duration: "영구적", downtime: "7~14일", pain: 3, sessions: "3~10회", price: "5~30만원/회", note: "깊은색소" },
             { name: "알렉산드라이트", brand: "다양", mechanism: "755nm 멜라닌 파괴", target: ["주근깨", "검버섯", "제모"], duration: "영구적", downtime: "5~10일", pain: 2.5, sessions: "1~5회", price: "5~20만원/회", note: "" },
-            { name: "젠틀맥스 프로", brand: "Candela", mechanism: "755nm + 1064nm 듀얼", target: ["색소", "제모", "혈관"], duration: "영구~유지필요", downtime: "1~5일", pain: 2.5, sessions: "3~10회", price: "10~30만원/회", note: "듀얼" }
+            { name: "젠틀맥스 프로", brand: "Candela", mechanism: "755nm + 1064nm 듀얼", target: ["색소", "제모", "혈관"], duration: "영구~유지필요", downtime: "1~5일", pain: 2.5, sessions: "3~10회", price: "10~30만원/회", note: "듀얼" },
+            { name: "클라리티 트윈", brand: "Lutronic", mechanism: "755nm+1064nm 플랫탑빔", target: ["색소", "제모", "피부톤"], duration: "영구~유지필요", downtime: "1~3일", pain: 2.5, sessions: "3~10회", price: "10~25만원/회", note: "국산" }
           ]
         },
         {
@@ -230,8 +233,7 @@ const DB = {
             { name: "앙코르", brand: "Lutronic", mechanism: "CO2 + CoolPeel 모드", target: ["흉터", "모공", "주름"], duration: "영구~유지필요", downtime: "3~14일", pain: 3, sessions: "3~5회", price: "30~60만원/회", note: "" },
             { name: "에코투/모자이크", brand: "다양", mechanism: "CO2 프랙셔널", target: ["흉터", "모공"], duration: "영구~유지필요", downtime: "5~10일", pain: 3, sessions: "3~5회", price: "20~50만원/회", note: "" },
             { name: "피코 프랙셔널", brand: "다양", mechanism: "피코레이저 프랙셔널, LIOB", target: ["모공", "흉터", "색소"], duration: "영구~유지필요", downtime: "1~3일", pain: 2, sessions: "3~5회", price: "15~40만원/회", note: "저다운타임" },
-            { name: "클리어앤브릴리언트", brand: "Solta", mechanism: "1440nm 저출력 프랙셔널", target: ["피부결", "모공", "유지관리"], duration: "유지필요", downtime: "1~2일", pain: 1.5, sessions: "4~6회", price: "15~30만원/회", note: "관리용" },
-            { name: "써펙트", brand: "Viora", mechanism: "RF 프랙셔널 + 마이크로니들", target: ["흉터", "모공", "탄력"], duration: "1년이상", downtime: "3~5일", pain: 3, sessions: "3~4회", price: "30~50만원/회", note: "RF프락셔널" }
+            { name: "클리어앤브릴리언트", brand: "Solta", mechanism: "1440nm 저출력 프랙셔널", target: ["피부결", "모공", "유지관리"], duration: "유지필요", downtime: "1~2일", pain: 1.5, sessions: "4~6회", price: "15~30만원/회", note: "관리용" }
           ]
         },
         {
@@ -303,7 +305,7 @@ const DB = {
             { name: "아띠에르", brand: "휴온스", mechanism: "국산 HA 필러", target: ["코", "이마", "턱"], duration: "6~12개월", downtime: "2~5일", pain: 2.5, sessions: "1회", price: "15~35만원", note: "국산" },
             { name: "래디에스", brand: "Merz", mechanism: "CaHA 기반, 즉각+콜라겐 생성", target: ["볼륨", "턱", "손등"], duration: "12~18개월", downtime: "2~5일", pain: 2.5, sessions: "1회", price: "40~80만원", note: "CaHA" },
             { name: "볼룩스", brand: "Allergan", mechanism: "고밀도 HA 안면윤곽용", target: ["턱", "광대", "이마"], duration: "18~24개월", downtime: "1~5일", pain: 2.5, sessions: "1회", price: "50~70만원/cc", note: "윤곽전용" },
-            { name: "테오시알 RHA", brand: "Teoxane", mechanism: "탄력HA, 표정 움직임에 적응", target: ["팔자", "입술", "눈가"], duration: "12~18개월", downtime: "1~3일", pain: 2.5, sessions: "1회", price: "40~60만원/cc", note: "움직임특화" }
+            { name: "테오시알 RHA", brand: "Teoxane", mechanism: "탄력HA, 표정적응", target: ["팔자", "입술", "눈가"], duration: "12~18개월", downtime: "1~3일", pain: 2.5, sessions: "1회", price: "40~60만원/cc", note: "움직임특화" }
           ]
         },
         {
@@ -391,9 +393,8 @@ const DB = {
             { name: "반퀴시", brand: "BTL", mechanism: "선택적 RF로 지방 가열 파괴", target: ["복부", "옆구리"], duration: "영구적", downtime: "없음", pain: 1.5, sessions: "4~6회", price: "30~60만원/회", note: "" },
             { name: "엠스컬프", brand: "BTL", mechanism: "HIFEM으로 근육 강화+지방 감소", target: ["복부", "엉덩이", "팔", "다리"], duration: "유지필요", downtime: "없음", pain: 2, sessions: "4~6회", price: "40~80만원/회", note: "근육+지방" },
             { name: "트루스컬프", brand: "Cutera", mechanism: "RF로 지방세포 파괴", target: ["복부", "옆구리"], duration: "영구적", downtime: "없음", pain: 2, sessions: "1~2회", price: "50~100만원/부위", note: "" },
-            { name: "엠스컬프 NEO", brand: "BTL", mechanism: "HIFEM+RF 동시, 근육증가+지방감소", target: ["복근", "힙업", "팔뚝"], duration: "6개월~1년", downtime: "없음", pain: 1, sessions: "4~8회", price: "30~50만원/회", note: "근육+지방동시" },
-            { name: "쿨스컬프팅 엘리트", brand: "Allergan", mechanism: "듀얼쿨링패널 업그레이드", target: ["복부", "옆구리", "허벅지"], duration: "영구적", downtime: "없음", pain: 2, sessions: "1~2회", price: "50~100만원/부위", note: "듀얼업그레이드" },
-            { name: "슈어", brand: "Cynosure", mechanism: "1060nm 다이오드 지방파괴", target: ["복부", "옆구리", "등"], duration: "영구적", downtime: "없음", pain: 2, sessions: "1~2회", price: "50~80만원/부위", note: "레이저지방파괴" }
+            { name: "엠스컬프 NEO", brand: "BTL", mechanism: "HIFEM+RF 동시, 근육+지방", target: ["복근", "힙업", "팔뚝"], duration: "6개월~1년", downtime: "없음", pain: 1, sessions: "4~8회", price: "30~50만원/회", note: "2세대" },
+            { name: "슈어", brand: "Cynosure", mechanism: "1060nm 다이오드 지방파괴", target: ["복부", "옆구리"], duration: "영구적", downtime: "없음", pain: 2, sessions: "1~2회", price: "50~80만원/부위", note: "레이저" }
           ]
         },
         {
@@ -402,6 +403,8 @@ const DB = {
           treatments: [
             { name: "튼살 프랙셔널", brand: "다양", mechanism: "프랙셔널로 튼살 부위 재생", target: ["튼살", "임신선"], duration: "영구~유지필요", downtime: "3~7일", pain: 2.5, sessions: "5~10회", price: "20~50만원/회", note: "" },
             { name: "셀룰라이트 관리", brand: "다양", mechanism: "RF/마사지로 셀룰라이트 개선", target: ["셀룰라이트", "허벅지"], duration: "유지필요", downtime: "없음", pain: 1.5, sessions: "10~20회", price: "10~30만원/회", note: "" },
+            { name: "인모드 바디FX", brand: "InMode", mechanism: "RF+석션으로 지방+셀룰라이트", target: ["셀룰라이트", "지방감소", "탄력"], duration: "6개월~1년", downtime: "없음", pain: 2, sessions: "6~8회", price: "30~50만원/회", note: "바디전용" },
+            { name: "비올라 리액션", brand: "Viora", mechanism: "CORE RF+진공 바디컨투어링", target: ["셀룰라이트", "지방감소", "탄력"], duration: "6개월~1년", downtime: "없음", pain: 1.5, sessions: "6~8회", price: "20~40만원/회", note: "멀티RF" },
             { name: "LPG 엔더몰로지", brand: "LPG", mechanism: "롤링 마사지로 림프순환/셀룰라이트", target: ["셀룰라이트", "부기"], duration: "유지필요", downtime: "없음", pain: 1, sessions: "10~20회", price: "10~20만원/회", note: "" }
           ]
         },
@@ -442,9 +445,15 @@ const DB = {
             { name: "RF케어", brand: "다양", mechanism: "저출력 RF로 탄력 관리", target: ["탄력", "리프팅"], duration: "일시적", downtime: "없음", pain: 1, sessions: "주 1~2회", price: "5~15만원/회", note: "" },
             { name: "쿨링/진정팩", brand: "다양", mechanism: "시술 후 진정 및 수분 공급", target: ["진정", "보습"], duration: "일시적", downtime: "없음", pain: 0, sessions: "시술후", price: "1~3만원", note: "시술후케어" },
             { name: "리쥬비네이션", brand: "다양", mechanism: "종합 피부재생 관리 프로그램", target: ["탄력", "재생", "윤기"], duration: "유지필요", downtime: "없음~1일", pain: 1, sessions: "주 1회, 10회", price: "10~30만원/회", note: "종합관리" },
-            { name: "LDM", brand: "Wellcomet", mechanism: "고밀도 초음파 마사지, 다중 주파수", target: ["트러블", "부기", "재생"], duration: "시술직후", downtime: "없음", pain: 0, sessions: "주1~2회", price: "5~15만원/회", note: "홈케어가능" },
+            { name: "LDM", brand: "Wellcomet", mechanism: "고밀도 초음파 마사지", target: ["트러블", "부기", "재생"], duration: "시술직후", downtime: "없음", pain: 0, sessions: "주1~2회", price: "5~15만원/회", note: "홈케어가능" },
             { name: "아쿠아필", brand: "다양", mechanism: "워터제트+석션 딥클렌징", target: ["모공", "피지", "각질"], duration: "2~4주", downtime: "없음", pain: 0, sessions: "2~4주간격", price: "5~15만원/회", note: "관리형" },
-            { name: "할리우드필", brand: "다양", mechanism: "카본필링+레이저토닝 병합", target: ["모공", "피지", "톤업"], duration: "2~4주", downtime: "없음", pain: 1, sessions: "2~4주간격", price: "10~20만원/회", note: "인기관리" }
+            { name: "할리우드필", brand: "다양", mechanism: "카본필링+레이저토닝", target: ["모공", "피지", "톤업"], duration: "2~4주", downtime: "없음", pain: 1, sessions: "2~4주간격", price: "10~20만원/회", note: "인기관리" },
+            { name: "톰더글로우", brand: "Tome", mechanism: "LDM 고밀도 초음파 홈케어", target: ["탄력", "재생", "부기"], duration: "시술직후", downtime: "없음", pain: 0, sessions: "매일가능", price: "기기구매", note: "홈케어" },
+            { name: "쿼드쎄라", brand: "다양", mechanism: "LDM 초음파 홈디바이스", target: ["탄력", "리프팅", "재생"], duration: "시술직후", downtime: "없음", pain: 0, sessions: "매일가능", price: "기기구매", note: "홈케어" },
+            { name: "오큐라", brand: "다양", mechanism: "LDM 초음파 홈디바이스", target: ["탄력", "재생", "눈가"], duration: "시술직후", downtime: "없음", pain: 0, sessions: "매일가능", price: "기기구매", note: "홈케어" },
+            { name: "타겟쿨", brand: "다양", mechanism: "CO2 냉각 비수면마취", target: ["통증완화", "마취"], duration: "시술중", downtime: "없음", pain: 0, sessions: "시술시", price: "추가비용", note: "냉각마취" },
+            { name: "매트릭스", brand: "다양", mechanism: "CO2+O2 호흡 진정마취", target: ["통증완화", "불안완화"], duration: "시술중", downtime: "없음", pain: 0, sessions: "시술시", price: "추가비용", note: "호흡마취" },
+            { name: "에어녹스", brand: "다양", mechanism: "아산화질소 호흡마취", target: ["통증완화", "불안완화"], duration: "시술중", downtime: "없음", pain: 0, sessions: "시술시", price: "추가비용", note: "호흡마취" }
           ]
         }
       ]
