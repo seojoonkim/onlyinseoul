@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrueKorea - 피부과</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div>
+          <h1>🏥 피부과 시술 완전정복</h1>
+          <p id="totalCount"></p>
+        </div>
+        <input type="text" class="search-input" id="searchInput" placeholder="시술명, 효과, 브랜드 검색...">
+      </div>
+      <div class="cat-tabs" id="catTabs"></div>
+    </div>
+  </header>
+
+  <main class="main">
+    <aside class="sidebar hidden" id="sidebar">
+      <div class="sidebar-box">
+        <h2 id="sidebarTitle"></h2>
+        <div id="subButtons"></div>
+      </div>
+    </aside>
+
+    <section class="content" id="content">
+      <div class="empty-state">
+        <h3>카테고리를 선택하세요</h3>
+        <p>상단 탭에서 관심있는 시술 카테고리를 선택해주세요</p>
+      </div>
+    </section>
+
+    <aside class="detail hidden" id="detailPanel">
+      <div class="detail-box" id="detailContent"></div>
+    </aside>
+
+    <section class="search-results hidden" id="searchResults"></section>
+  </main>
+
+  <footer class="footer">
+    <p>⚠️ 본 정보는 참고용이며 실제 시술은 전문의 상담 후 결정하세요. 가격/효과는 병원/개인별로 다를 수 있습니다.</p>
+  </footer>
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
