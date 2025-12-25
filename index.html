@@ -39,8 +39,9 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      text-align: left;
     }
-    .menu a {
+    .menu-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -53,34 +54,79 @@
       font-size: 17px;
       font-weight: 500;
       transition: all 0.15s;
+      cursor: pointer;
     }
-    .menu a:hover {
+    .menu-item:hover {
       background: #f5f5f5;
       border-color: #ddd;
     }
-    .menu a.active {
+    .menu-item.active {
       background: #111;
       color: #fff;
       border-color: #111;
     }
-    .menu a .arrow {
+    .menu-item .arrow {
       font-size: 20px;
       opacity: 0.5;
+      transition: transform 0.2s;
     }
-    .menu a.active .arrow {
+    .menu-item.active .arrow {
       opacity: 1;
     }
-    .menu a .badge {
+    .menu-item.expanded .arrow {
+      transform: rotate(90deg);
+    }
+    .menu-item .badge {
       font-size: 12px;
       background: #eee;
       padding: 4px 10px;
       border-radius: 20px;
       color: #888;
     }
-    .menu a.active .badge {
-      background: rgba(255,255,255,0.2);
-      color: #fff;
+    
+    /* 서브메뉴 */
+    .submenu {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 0 0 20px;
     }
+    .submenu.show {
+      display: flex;
+    }
+    .submenu a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #333;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .submenu a:hover {
+      background: #f8f8f8;
+      border-color: #ddd;
+    }
+    .submenu a .version {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .submenu a .version.v1 {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+    .submenu a .version.new {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+    
     .footer {
       margin-top: 60px;
       font-size: 13px;
@@ -95,27 +141,41 @@
     <p class="tagline">한국의 진짜 정보</p>
     
     <nav class="menu">
-      <a href="./dermatology/" class="active">
-        <span>🏥 피부과</span>
-        <span class="arrow">→</span>
-      </a>
-      <a href="#">
+      <!-- 피부과 (확장 메뉴) -->
+      <div class="menu-group">
+        <div class="menu-item active expanded" onclick="toggleSubmenu(this)">
+          <span>🏥 피부과</span>
+          <span class="arrow">→</span>
+        </div>
+        <div class="submenu show">
+          <a href="./derm-project/">
+            <span>📋 시술 DB (200개)</span>
+            <span class="version v1">v1</span>
+          </a>
+          <a href="./derm-project-v2/">
+            <span>✨ 시술 가이드 (상세)</span>
+            <span class="version new">v2 NEW</span>
+          </a>
+        </div>
+      </div>
+      
+      <a href="#" class="menu-item">
         <span>💉 성형외과</span>
         <span class="badge">준비중</span>
       </a>
-      <a href="#">
+      <a href="#" class="menu-item">
         <span>🦷 치과</span>
         <span class="badge">준비중</span>
       </a>
-      <a href="#">
+      <a href="#" class="menu-item">
         <span>💄 화장품</span>
         <span class="badge">준비중</span>
       </a>
-      <a href="#">
+      <a href="#" class="menu-item">
         <span>🍜 맛집</span>
         <span class="badge">준비중</span>
       </a>
-      <a href="#">
+      <a href="#" class="menu-item">
         <span>📍 관광지</span>
         <span class="badge">준비중</span>
       </a>
@@ -123,5 +183,13 @@
     
     <p class="footer">© 2025 TrueKorea</p>
   </div>
+
+  <script>
+    function toggleSubmenu(el) {
+      el.classList.toggle('expanded');
+      const submenu = el.nextElementSibling;
+      submenu.classList.toggle('show');
+    }
+  </script>
 </body>
 </html>

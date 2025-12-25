@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>피부과 시술 가이드 | TrueKorea</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 헤더 -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">💉</span>
+        <div>
+          <h1>피부과 시술 가이드</h1>
+          <p class="subtitle">처음이어도 괜찮아요, 쉽게 알려드릴게요</p>
+        </div>
+      </div>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="시술명, 고민, 효과로 검색..." />
+        <span class="search-icon">🔍</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 고민별 퀵 메뉴 -->
+  <section class="quick-menu">
+    <div class="quick-inner">
+      <button class="quick-btn" data-concern="처짐">😔 처진 피부</button>
+      <button class="quick-btn" data-concern="주름">👵 주름</button>
+      <button class="quick-btn" data-concern="탄력">✨ 탄력</button>
+      <button class="quick-btn" data-concern="모공">🔵 모공</button>
+      <button class="quick-btn" data-concern="색소">🎨 기미/잡티</button>
+      <button class="quick-btn" data-concern="여드름">😣 여드름</button>
+      <button class="quick-btn" data-concern="볼륨">💧 볼륨</button>
+      <button class="quick-btn" data-concern="제모">🪒 제모</button>
+    </div>
+  </section>
+
+  <!-- 메인 컨텐츠 -->
+  <main class="main-content">
+    <!-- 시술 목록 -->
+    <section class="treatment-list" id="treatmentList">
+      <div class="list-header">
+        <h2 id="listTitle">인기 시술</h2>
+        <span class="count" id="listCount"></span>
+      </div>
+      <div class="cards" id="cardsContainer">
+        <!-- 카드들이 여기에 렌더링 -->
+      </div>
+    </section>
+
+    <!-- 시술 상세 패널 -->
+    <aside class="detail-panel hidden" id="detailPanel">
+      <button class="close-btn" id="closeDetail">✕</button>
+      <div class="detail-content" id="detailContent">
+        <!-- 상세 정보가 여기에 렌더링 -->
+      </div>
+    </aside>
+  </main>
+
+  <!-- 초보자 가이드 팝업 -->
+  <div class="guide-popup hidden" id="guidePopup">
+    <div class="guide-content">
+      <button class="close-btn" id="closeGuide">✕</button>
+      <h2>🌟 피부과 시술, 처음이세요?</h2>
+      <div class="guide-steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <h3>고민 선택</h3>
+          <p>위의 버튼에서 본인의 피부 고민을 선택하세요</p>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <h3>시술 비교</h3>
+          <p>추천된 시술들의 장단점을 비교해보세요</p>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <h3>상담 예약</h3>
+          <p>마음에 드는 시술을 정했다면 병원에서 상담받으세요</p>
+        </div>
+      </div>
+      <button class="guide-close-btn" id="guideCloseBtn">시작하기</button>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="footer">
+    <p>⚠️ 본 정보는 참고용이며, 실제 시술은 반드시 전문의 상담 후 결정하세요.</p>
+    <p>가격과 효과는 병원 및 개인에 따라 다를 수 있습니다.</p>
+  </footer>
+
+  <script src="db_extended.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
