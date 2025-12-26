@@ -12,15 +12,17 @@
         <!-- Header -->
         <header class="header">
             <div class="header-left">
-                <a href="../" class="logo-link">
-                    <h1 class="logo">True Korea <span class="logo-sub">피부과 가이드</span></h1>
+                <a href="../" class="logo-link logo-main">True Korea</a>
+                <a href="./" class="logo-link logo-sub-link" onclick="goToLanding(event)">
+                    <span class="logo-divider">|</span>
+                    <span class="logo-sub">피부과 가이드</span>
                 </a>
                 <span class="db-count" id="dbCount">0개 시술</span>
             </div>
             
             <!-- View Tabs (Center) -->
             <nav class="view-tabs">
-                <button class="view-tab active" data-view="consult">✨ AI 상담</button>
+                <button class="view-tab" data-view="consult">✨ AI 상담</button>
                 <button class="view-tab" data-view="concern">고민별 찾기</button>
                 <button class="view-tab" data-view="filter">카드 뷰</button>
                 <button class="view-tab" data-view="table">테이블 뷰</button>
@@ -38,8 +40,99 @@
         <!-- Main Content -->
         <main class="main-content">
             
+            <!-- Landing Page -->
+            <section class="view-panel active" id="view-landing">
+                <div class="landing-fullscreen">
+                    <div class="landing-left">
+                        <div class="landing-badge">True Korea 피부과 가이드</div>
+                        <h1 class="landing-title">피부과 시술,<br><span class="highlight">준비된 상태</span>로<br>상담받으세요</h1>
+                        <p class="landing-subtitle">
+                            100개가 넘는 시술명, 병원마다 다른 가격.<br>
+                            무엇을 선택해야 할지 막막하셨죠?<br><br>
+                            <strong>이제는 객관적인 데이터로 미리 준비하세요.</strong><br>
+                            나에게 맞는 시술이 무엇인지, 적정 가격은 얼마인지<br>
+                            알고 가면 상담 결과가 달라집니다.
+                        </p>
+                        <button class="cta-button-main" onclick="switchToView('consult')">
+                            ✨ AI 맞춤 상담 시작하기
+                        </button>
+                        
+                        <div class="landing-stats-bar">
+                            <div class="stat-item">
+                                <span class="stat-num">1,000+</span>
+                                <span class="stat-label">피부과 정보 수집</span>
+                            </div>
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <span class="stat-num">15만+</span>
+                                <span class="stat-label">시술 후기 분석</span>
+                            </div>
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <span class="stat-num">196</span>
+                                <span class="stat-label">검증된 시술 DB</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="landing-right">
+                        <div class="landing-card main" onclick="switchToView('consult')">
+                            <div class="card-badge">추천</div>
+                            <div class="card-header">
+                                <span class="card-icon">✨</span>
+                                <span class="card-title">AI 맞춤 시술 상담</span>
+                            </div>
+                            <p class="card-desc">
+                                나이, 피부 고민, 예산, 다운타임 허용 범위를 입력하면<br>
+                                <strong>나에게 최적화된 시술 조합 3가지</strong>를 추천받을 수 있어요.
+                            </p>
+                            <div class="card-features">
+                                <span>✓ 예산 최적화</span>
+                                <span>✓ 시술 순서 안내</span>
+                                <span>✓ 주의사항 체크리스트</span>
+                            </div>
+                        </div>
+                        
+                        <div class="landing-card-row">
+                            <div class="landing-card" onclick="switchToView('concern')">
+                                <span class="card-icon">🔍</span>
+                                <span class="card-title">고민별 시술 찾기</span>
+                                <p class="card-desc-small">주름, 탄력, 모공, 기미 등<br>내 고민에 맞는 시술만 탐색</p>
+                            </div>
+                            <div class="landing-card" onclick="switchToView('filter')">
+                                <span class="card-icon">📋</span>
+                                <span class="card-title">전체 시술 검색</span>
+                                <p class="card-desc-small">196개 시술 정보를<br>자유롭게 비교하고 검색</p>
+                            </div>
+                        </div>
+                        
+                        <div class="landing-trust-text">
+                            <p class="trust-intro">
+                                피부과에 가면 상담사가 추천하는 대로 결정하게 되는 경우가 많습니다.<br>
+                                시술명도 생소하고, 가격이 적정한지 판단하기도 어렵죠.
+                            </p>
+                            <p class="trust-solution">
+                                <strong>True Korea 피부과 가이드</strong>는 서울 소재 <strong>1,000개 이상의 피부과</strong>에서 제공하는 시술 정보를 수집하고, 
+                                지난 3년간 축적된 <strong>15만 건 이상의 실제 시술 후기</strong>를 분석하여 만들어졌습니다.
+                            </p>
+                            <p class="trust-expert">
+                                또한 <strong>10명 이상의 피부과 전문의</strong>가 직접 참여하여, 과학적이고 객관적인 방법론을 기반으로
+                                추천 엔진과 시술 데이터베이스를 개발했습니다.
+                            </p>
+                            <p class="trust-closing">
+                                이 데이터를 바탕으로 <strong>196개의 검증된 시술 정보</strong>를 정리했습니다.<br>
+                                이제 미리 준비하고, 주도적으로 상담받으세요.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="landing-footer-bar">
+                    <span>본 서비스는 참고용 정보이며, 실제 시술 전 전문의 상담을 권장합니다</span>
+                </div>
+            </section>
+
             <!-- View 0: AI 상담 -->
-            <section class="view-panel active" id="view-consult">
+            <section class="view-panel" id="view-consult">
                 <div class="consult-container">
                     <!-- 상담 진행 화면 -->
                     <div class="consult-wizard" id="consultWizard">
@@ -77,24 +170,40 @@
                         <div class="consult-step active" data-step="1">
                             <div class="step-message">
                                 <p>안녕하세요! 😊 피부 고민 해결을 도와드릴 <strong>AI 상담사</strong>예요.</p>
-                                <p>먼저 연령대와 시술 경험을 알려주시겠어요?</p>
+                                <p>먼저 기본 정보를 알려주시겠어요?</p>
                             </div>
                             <div class="step-questions">
                                 <div class="question-group">
                                     <label class="question-label">연령대</label>
-                                    <div class="option-grid cols-4">
-                                        <button class="option-btn" data-field="age" data-value="20대">20대</button>
-                                        <button class="option-btn" data-field="age" data-value="30대">30대</button>
-                                        <button class="option-btn" data-field="age" data-value="40대">40대</button>
-                                        <button class="option-btn" data-field="age" data-value="50대+">50대+</button>
+                                    <div class="option-grid cols-5">
+                                        <button class="option-btn" data-field="age" data-value="10대">10대</button>
+                                        <button class="option-btn" data-field="age" data-value="20대 초반">20대 초반</button>
+                                        <button class="option-btn" data-field="age" data-value="20대 후반">20대 후반</button>
+                                        <button class="option-btn" data-field="age" data-value="30대 초반">30대 초반</button>
+                                        <button class="option-btn" data-field="age" data-value="30대 후반">30대 후반</button>
+                                        <button class="option-btn" data-field="age" data-value="40대 초반">40대 초반</button>
+                                        <button class="option-btn" data-field="age" data-value="40대 후반">40대 후반</button>
+                                        <button class="option-btn" data-field="age" data-value="50대">50대</button>
+                                        <button class="option-btn" data-field="age" data-value="60대 이상">60대 이상</button>
                                     </div>
                                 </div>
                                 <div class="question-group">
                                     <label class="question-label">피부과 시술 경험</label>
-                                    <div class="option-grid cols-3">
+                                    <div class="option-grid cols-4">
                                         <button class="option-btn" data-field="experience" data-value="처음">처음이에요</button>
-                                        <button class="option-btn" data-field="experience" data-value="몇번">몇 번 해봤어요</button>
-                                        <button class="option-btn" data-field="experience" data-value="자주">자주 받아요</button>
+                                        <button class="option-btn" data-field="experience" data-value="1-2회">1~2번 해봤어요</button>
+                                        <button class="option-btn" data-field="experience" data-value="3-5회">3~5번 정도</button>
+                                        <button class="option-btn" data-field="experience" data-value="자주">자주 받아요 (6회+)</button>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label class="question-label">피부 타입</label>
+                                    <div class="option-grid cols-5">
+                                        <button class="option-btn" data-field="skinType" data-value="건성">건성 (당김)</button>
+                                        <button class="option-btn" data-field="skinType" data-value="지성">지성 (번들거림)</button>
+                                        <button class="option-btn" data-field="skinType" data-value="복합성">복합성</button>
+                                        <button class="option-btn" data-field="skinType" data-value="민감성">민감성</button>
+                                        <button class="option-btn" data-field="skinType" data-value="모름">잘 모르겠어요</button>
                                     </div>
                                 </div>
                             </div>
@@ -107,21 +216,53 @@
                             </div>
                             <div class="step-questions">
                                 <div class="question-group">
-                                    <div class="option-grid cols-3 multi-select" data-field="concerns">
+                                    <label class="question-label">노화 / 리프팅 관련</label>
+                                    <div class="option-grid cols-4 multi-select" data-field="concerns">
                                         <button class="option-btn" data-value="처진피부">😔 처진 피부</button>
-                                        <button class="option-btn" data-value="주름">👵 주름</button>
+                                        <button class="option-btn" data-value="주름">👵 주름 전반</button>
                                         <button class="option-btn" data-value="탄력저하">✨ 탄력 저하</button>
-                                        <button class="option-btn" data-value="모공">🔵 모공</button>
-                                        <button class="option-btn" data-value="기미잡티">🎨 기미/잡티</button>
-                                        <button class="option-btn" data-value="여드름">😣 여드름</button>
                                         <button class="option-btn" data-value="볼륨손실">💧 볼륨 손실</button>
-                                        <button class="option-btn" data-value="흉터">🩹 흉터</button>
-                                        <button class="option-btn" data-value="피부결">🪞 피부결/톤</button>
+                                        <button class="option-btn" data-value="이중턱">🫠 이중턱</button>
+                                        <button class="option-btn" data-value="팔자주름">😮‍💨 팔자주름</button>
+                                        <button class="option-btn" data-value="목주름">🦒 목주름</button>
+                                        <button class="option-btn" data-value="눈가주름">👁️ 눈가주름</button>
                                     </div>
                                 </div>
                                 <div class="question-group">
-                                    <label class="question-label">그 외 고민이 있다면 자유롭게 적어주세요</label>
-                                    <textarea class="text-input" id="concernsExtra" placeholder="예: 눈밑 다크서클이 심해요, 목주름이 신경쓰여요..."></textarea>
+                                    <label class="question-label">피부결 / 톤 관련</label>
+                                    <div class="option-grid cols-4 multi-select" data-field="concerns">
+                                        <button class="option-btn" data-value="모공">🔵 모공</button>
+                                        <button class="option-btn" data-value="기미잡티">🎨 기미/잡티</button>
+                                        <button class="option-btn" data-value="피부결">🪞 피부결 개선</button>
+                                        <button class="option-btn" data-value="피부톤">🌟 피부톤 개선</button>
+                                        <button class="option-btn" data-value="홍조">🔴 홍조/붉은기</button>
+                                        <button class="option-btn" data-value="색소침착">🟤 색소침착</button>
+                                        <button class="option-btn" data-value="검버섯">⚫ 검버섯</button>
+                                        <button class="option-btn" data-value="주근깨">🟠 주근깨</button>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label class="question-label">트러블 / 흉터 관련</label>
+                                    <div class="option-grid cols-4 multi-select" data-field="concerns">
+                                        <button class="option-btn" data-value="여드름">😣 여드름</button>
+                                        <button class="option-btn" data-value="여드름흉터">🕳️ 여드름 흉터</button>
+                                        <button class="option-btn" data-value="흉터">🩹 일반 흉터</button>
+                                        <button class="option-btn" data-value="튼살">📏 튼살</button>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label class="question-label">기타</label>
+                                    <div class="option-grid cols-4 multi-select" data-field="concerns">
+                                        <button class="option-btn" data-value="다크서클">👀 다크서클</button>
+                                        <button class="option-btn" data-value="제모">🪒 제모</button>
+                                        <button class="option-btn" data-value="탈모">👨‍🦲 탈모</button>
+                                        <button class="option-btn" data-value="다한증">💦 다한증</button>
+                                        <button class="option-btn" data-value="점제거">⚫ 점/사마귀</button>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label class="question-label">그 외 고민이 있다면 (선택)</label>
+                                    <textarea class="text-input" id="concernsExtra" placeholder="예: 문신 제거, 눈밑 꺼짐 등 위에 없는 고민..."></textarea>
                                 </div>
                             </div>
                         </div>
@@ -129,19 +270,47 @@
                         <!-- Step 3: 부위 선택 -->
                         <div class="consult-step" data-step="3">
                             <div class="step-message">
-                                <p>주로 <strong>어느 부위</strong>가 신경 쓰이세요?</p>
+                                <p>주로 <strong>어느 부위</strong>가 신경 쓰이세요? 여러 개 선택 가능!</p>
                             </div>
                             <div class="step-questions">
                                 <div class="question-group">
-                                    <div class="option-grid cols-4 multi-select" data-field="areas">
+                                    <label class="question-label">얼굴 부위</label>
+                                    <div class="option-grid cols-5 multi-select" data-field="areas">
                                         <button class="option-btn" data-value="이마">이마</button>
+                                        <button class="option-btn" data-value="미간">미간</button>
                                         <button class="option-btn" data-value="눈가">눈가</button>
-                                        <button class="option-btn" data-value="볼">볼</button>
+                                        <button class="option-btn" data-value="눈밑">눈밑</button>
                                         <button class="option-btn" data-value="코">코</button>
+                                        <button class="option-btn" data-value="볼">볼</button>
+                                        <button class="option-btn" data-value="광대">광대</button>
                                         <button class="option-btn" data-value="입주변">입 주변</button>
-                                        <button class="option-btn" data-value="턱선">턱선</button>
+                                        <button class="option-btn" data-value="턱선">턱선/턱밑</button>
                                         <button class="option-btn" data-value="목">목</button>
-                                        <button class="option-btn" data-value="전체">얼굴 전체</button>
+                                        <button class="option-btn" data-value="두피">두피</button>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label class="question-label">바디 부위</label>
+                                    <div class="option-grid cols-5 multi-select" data-field="areas">
+                                        <button class="option-btn" data-value="손등">손등</button>
+                                        <button class="option-btn" data-value="팔">팔</button>
+                                        <button class="option-btn" data-value="겨드랑이">겨드랑이</button>
+                                        <button class="option-btn" data-value="등">등</button>
+                                        <button class="option-btn" data-value="가슴">가슴</button>
+                                        <button class="option-btn" data-value="복부">복부</button>
+                                        <button class="option-btn" data-value="허벅지">허벅지</button>
+                                        <button class="option-btn" data-value="다리">다리</button>
+                                        <button class="option-btn" data-value="비키니라인">비키니라인</button>
+                                        <button class="option-btn" data-value="엉덩이">엉덩이</button>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label class="question-label">전체 선택</label>
+                                    <div class="option-grid cols-4 multi-select" data-field="areas">
+                                        <button class="option-btn" data-value="얼굴전체">🙂 얼굴 전체</button>
+                                        <button class="option-btn" data-value="얼굴상반부">🔼 상반부 (이마~코)</button>
+                                        <button class="option-btn" data-value="얼굴하반부">🔽 하반부 (코~턱)</button>
+                                        <button class="option-btn" data-value="전신">✨ 전신</button>
                                     </div>
                                 </div>
                             </div>
@@ -179,20 +348,31 @@
                             </div>
                             <div class="step-questions">
                                 <div class="question-group">
-                                    <label class="question-label">다운타임 (회복 기간)</label>
-                                    <div class="option-grid cols-2">
-                                        <button class="option-btn" data-field="downtime" data-value="없어야함">없어야 해요</button>
-                                        <button class="option-btn" data-field="downtime" data-value="1-2일">1~2일 괜찮아요</button>
-                                        <button class="option-btn" data-field="downtime" data-value="일주일">일주일까지 OK</button>
-                                        <button class="option-btn" data-field="downtime" data-value="상관없음">상관없어요</button>
+                                    <label class="question-label">다운타임 (회복 기간) 허용 범위</label>
+                                    <div class="option-grid cols-3">
+                                        <button class="option-btn" data-field="downtime" data-value="없어야함">❌ 없어야 해요</button>
+                                        <button class="option-btn" data-field="downtime" data-value="당일">📍 당일만 가능</button>
+                                        <button class="option-btn" data-field="downtime" data-value="1-2일">📅 1~2일 OK</button>
+                                        <button class="option-btn" data-field="downtime" data-value="3-4일">📅 3~4일 OK</button>
+                                        <button class="option-btn" data-field="downtime" data-value="일주일">📅 일주일 OK</button>
+                                        <button class="option-btn" data-field="downtime" data-value="상관없음">✅ 상관없어요</button>
                                     </div>
                                 </div>
                                 <div class="question-group">
                                     <label class="question-label">통증 민감도</label>
+                                    <div class="option-grid cols-4">
+                                        <button class="option-btn" data-field="pain" data-value="매우민감">😰 매우 무서워요</button>
+                                        <button class="option-btn" data-field="pain" data-value="민감">😟 좀 무서워요</button>
+                                        <button class="option-btn" data-field="pain" data-value="보통">😐 보통이에요</button>
+                                        <button class="option-btn" data-field="pain" data-value="괜찮음">💪 잘 참아요</button>
+                                    </div>
+                                </div>
+                                <div class="question-group">
+                                    <label class="question-label">마취 선호도</label>
                                     <div class="option-grid cols-3">
-                                        <button class="option-btn" data-field="pain" data-value="민감">많이 무서워요 😰</button>
-                                        <button class="option-btn" data-field="pain" data-value="보통">보통이에요</button>
-                                        <button class="option-btn" data-field="pain" data-value="괜찮음">잘 참아요 💪</button>
+                                        <button class="option-btn" data-field="anesthesia" data-value="무마취">무마취 선호</button>
+                                        <button class="option-btn" data-field="anesthesia" data-value="연고마취">연고 마취 OK</button>
+                                        <button class="option-btn" data-field="anesthesia" data-value="상관없음">상관없어요</button>
                                     </div>
                                 </div>
                             </div>
@@ -762,28 +942,6 @@
                 <div class="modal-content" id="modalContent"></div>
             </div>
         </div>
-
-        <!-- Admin Modal -->
-        <div class="admin-modal hidden" id="adminModal">
-            <div class="admin-content">
-                <h3 class="admin-title">🔐 관리자 설정</h3>
-                <p class="admin-desc">AI 상담 기능을 위한 Claude API 키를 설정하세요.</p>
-                <input type="password" class="admin-input" id="apiKeyInput" placeholder="sk-ant-...">
-                <div class="admin-buttons">
-                    <button class="admin-btn cancel" id="adminCancel">취소</button>
-                    <button class="admin-btn save" id="adminSave">저장</button>
-                </div>
-                <div class="admin-status hidden" id="adminStatus"></div>
-            </div>
-        </div>
-
-        <!-- Admin Link -->
-        <button class="admin-link" id="adminLink" title="관리자 설정">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
-            </svg>
-        </button>
     </div>
 
     <script src="db_extended.js"></script>
