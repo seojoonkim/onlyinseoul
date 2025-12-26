@@ -1138,7 +1138,7 @@ async function callClaudeAPI(userData) {
         sessions: t.procedure?.sessions || ''
     }));
     
-    const systemPrompt = `당신은 10년 경력의 피부과 전문 상담사입니다. 고객님께 친근하고 전문적인 톤으로 상담해주세요.
+    const systemPrompt = `당신은 10년 경력의 피부과 전문 상담사입니다. 마치 오프라인에서 1:1로 상담하듯 따뜻하고 친절하게 설명해주세요.
 
 핵심 규칙:
 1. 고객의 총 예산(${userData.budget}만원)을 최대한 활용하세요. 예산의 80% 이상을 사용하는 조합을 제안하세요.
@@ -1147,33 +1147,44 @@ async function callClaudeAPI(userData) {
    - 조합1: 예산의 90-100% 활용, 프리미엄 시술 중심
    - 조합2: 예산의 80-90% 활용, 균형잡힌 조합
    - 조합3: 예산의 70-80% 활용, 가성비 중심 다양한 시술
-4. 각 조합에 최소 3-5개의 시술을 포함하세요. 시술 개수를 아끼지 마세요!
+4. 각 조합에 최소 3-5개의 시술을 포함하세요.
 5. 가격은 병원마다 다르므로 최소 가격 기준으로 계산하세요.
-6. 시술 순서와 간격도 상세히 안내하세요.
 
 응답 형식 (반드시 이 JSON 형식으로):
 {
-    "greeting": "고객 맞춤 인사말 (2문장)",
-    "analysis": "피부 상태 분석 (2문장)",
+    "greeting": "고객 맞춤 인사말 (3-4문장, 고민에 공감하며 따뜻하게)",
+    "analysis": "피부 상태 분석 및 접근 방향 (3-4문장, 왜 이런 시술들이 필요한지 설명)",
+    "skinType": "고객의 예상 피부 타입 및 특징 분석 (2-3문장)",
     "combinations": [
         {
             "name": "조합 이름",
-            "concept": "컨셉 설명 (1문장)",
+            "concept": "이 조합의 컨셉과 어떤 분께 추천하는지 (2문장)",
             "totalPrice": "총 예상 비용",
+            "expectedResult": "이 조합으로 기대할 수 있는 결과 (2문장)",
             "treatments": [
                 {
                     "name": "시술명",
-                    "reason": "선택 이유 (10자 이내)",
+                    "reason": "선택 이유와 효과 (1-2문장)",
                     "price": "가격",
-                    "sessions": "횟수"
+                    "sessions": "횟수",
+                    "painLevel": "통증 정도 (예: 거의 없음/약간 따끔/중간/아픔)",
+                    "downtime": "회복 기간"
                 }
             ],
-            "order": "시술 순서 (간단히)"
+            "order": "시술 순서와 간격, 왜 이 순서인지 설명 (2-3문장)",
+            "maintenancePlan": "유지 관리 방법 (1-2문장)"
         }
     ],
-    "recommendation": "추천 조합과 이유 (1-2문장)",
-    "tips": ["팁1", "팁2", "팁3"],
-    "closing": "마무리 (1문장)"
+    "recommendation": "3가지 조합 중 가장 추천하는 것과 상세한 이유 (3-4문장)",
+    "precautions": {
+        "before": ["시술 전 주의사항 5가지 (구체적으로)"],
+        "after": ["시술 후 관리법 5가지 (구체적으로)"],
+        "avoid": ["피해야 할 것들 3가지"]
+    },
+    "checkList": ["병원 방문 전 꼭 확인할 것 5가지 (질문할 내용 포함)"],
+    "timeline": "전체 시술 플랜의 예상 기간과 타임라인 (2-3문장)",
+    "tips": ["전문가로서 드리는 꿀팁 5가지 (실용적인 조언)"],
+    "closing": "따뜻한 마무리 인사와 응원 (2-3문장)"
 }
 
 시술 데이터:
@@ -1277,6 +1288,36 @@ function getFallbackResponse(userData) {
     };
 }
 
+function getPriceRange(combinations) {
+    if (!combinations || combinations.length === 0) return '-';
+    
+    const prices = combinations.map(c => {
+        const priceStr = c.totalPrice || '';
+        const match = priceStr.match(/(\d+)/);
+        return match ? parseInt(match[0]) : 0;
+    }).filter(p => p > 0);
+    
+    if (prices.length === 0) return '-';
+    
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    
+    if (min === max) return `약 ${min}만원`;
+    return `${min}~${max}만원`;
+}
+
+function getTotalTreatments(combinations) {
+    if (!combinations) return 0;
+    
+    const allTreatments = new Set();
+    combinations.forEach(c => {
+        c.treatments?.forEach(t => {
+            allTreatments.add(t.name);
+        });
+    });
+    return allTreatments.size;
+}
+
 function displayResult(response) {
     document.getElementById('consultLoading').classList.add('hidden');
     document.getElementById('consultResult').classList.remove('hidden');
@@ -1302,12 +1343,20 @@ function displayResult(response) {
                         <div class="summary-value">${userData.concerns?.slice(0,2).join(', ') || '-'}</div>
                     </div>
                     <div class="summary-item">
-                        <div class="summary-label">총 예산</div>
+                        <div class="summary-label">설정 예산</div>
                         <div class="summary-value">${userData.budget ? userData.budget + '만원' : '-'}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">제안 가격대</div>
+                        <div class="summary-value highlight">${getPriceRange(response.combinations)}</div>
                     </div>
                     <div class="summary-item">
                         <div class="summary-label">다운타임</div>
                         <div class="summary-value">${userData.downtime || '-'}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">시술 개수</div>
+                        <div class="summary-value">${getTotalTreatments(response.combinations)}개</div>
                     </div>
                 </div>
             </div>
@@ -1317,8 +1366,18 @@ function displayResult(response) {
                 <div class="report-greeting">
                     <p>${response.greeting}</p>
                     ${response.analysis ? `<p>${response.analysis}</p>` : ''}
+                    ${response.skinType ? `<p><strong>피부 타입 분석:</strong> ${response.skinType}</p>` : ''}
                 </div>
             </div>
+            
+            ${response.timeline ? `
+            <div class="report-section">
+                <h3 class="report-section-title">📅 전체 플랜 타임라인</h3>
+                <div class="report-comment">
+                    <p>${response.timeline}</p>
+                </div>
+            </div>
+            ` : ''}
             
             <div class="report-section">
                 <h3 class="report-section-title">
@@ -1336,13 +1395,22 @@ function displayResult(response) {
                             </div>
                             <div class="combination-price">${combo.totalPrice}</div>
                         </div>
-                        <div class="combination-desc">${combo.concept}</div>
+                        <div class="combination-desc">
+                            ${combo.concept}
+                            ${combo.expectedResult ? `<div class="expected-result">✨ 기대효과: ${combo.expectedResult}</div>` : ''}
+                        </div>
                         <div class="combination-treatments">
                             ${combo.treatments?.map(t => `
                                 <div class="treatment-item">
                                     <div class="treatment-info">
                                         <div class="treatment-name">${t.name}</div>
                                         <div class="treatment-detail">${t.reason}</div>
+                                        ${t.painLevel || t.downtime ? `
+                                        <div class="treatment-meta">
+                                            ${t.painLevel ? `<span>통증: ${t.painLevel}</span>` : ''}
+                                            ${t.downtime ? `<span>회복: ${t.downtime}</span>` : ''}
+                                        </div>
+                                        ` : ''}
                                     </div>
                                     <div class="treatment-price">
                                         ${t.price}
@@ -1355,6 +1423,12 @@ function displayResult(response) {
                             <div class="order-guide">
                                 <div class="order-guide-title">📅 순서</div>
                                 <div class="order-guide-content">${combo.order}</div>
+                            </div>
+                        ` : ''}
+                        ${combo.maintenancePlan ? `
+                            <div class="maintenance-guide">
+                                <div class="order-guide-title">🔄 유지 관리</div>
+                                <div class="order-guide-content">${combo.maintenancePlan}</div>
                             </div>
                         ` : ''}
                     </div>
@@ -1371,9 +1445,49 @@ function displayResult(response) {
             </div>
             ` : ''}
             
+            ${response.precautions ? `
+            <div class="report-section">
+                <h3 class="report-section-title">⚠️ 시술 전후 주의사항</h3>
+                <div class="precautions-grid">
+                    <div class="precaution-box before">
+                        <h4>🔸 시술 전 주의사항</h4>
+                        <ul>
+                            ${response.precautions.before?.map(item => `<li>${item}</li>`).join('') || ''}
+                        </ul>
+                    </div>
+                    <div class="precaution-box after">
+                        <h4>🔹 시술 후 관리법</h4>
+                        <ul>
+                            ${response.precautions.after?.map(item => `<li>${item}</li>`).join('') || ''}
+                        </ul>
+                    </div>
+                    ${response.precautions.avoid?.length ? `
+                    <div class="precaution-box avoid">
+                        <h4>🚫 피해야 할 것</h4>
+                        <ul>
+                            ${response.precautions.avoid?.map(item => `<li>${item}</li>`).join('') || ''}
+                        </ul>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+            ` : ''}
+            
+            ${response.checkList?.length ? `
+            <div class="report-section">
+                <h3 class="report-section-title">📋 병원 방문 전 체크리스트</h3>
+                <div class="checklist-box">
+                    <p class="checklist-intro">상담 시 아래 내용을 꼭 확인하세요:</p>
+                    <ul class="checklist">
+                        ${response.checkList.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+            ` : ''}
+            
             ${response.tips?.length ? `
             <div class="report-section">
-                <h3 class="report-section-title">✓ 시술 전 체크리스트</h3>
+                <h3 class="report-section-title">💡 전문가 꿀팁</h3>
                 <ul class="report-tips">
                     ${response.tips.map(tip => `<li>${tip}</li>`).join('')}
                 </ul>
@@ -1382,7 +1496,7 @@ function displayResult(response) {
             
             ${response.closing ? `
             <div class="report-section">
-                <div class="report-comment">
+                <div class="report-closing">
                     <p>${response.closing}</p>
                 </div>
             </div>
