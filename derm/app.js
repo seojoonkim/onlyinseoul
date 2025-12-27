@@ -1514,7 +1514,9 @@ function generateRuleBasedRecommendation(userData) {
     const frequency = userData.frequency || '비정기';
     const pastTreatments = userData.pastTreatments || [];
     const experience = userData.experience || '처음';
-    const skinType = userData.skinType || '복합성';
+    // '모름' 선택 시 '복합성'으로 처리
+    const rawSkinType = userData.skinType || '복합성';
+    const skinType = rawSkinType === '모름' ? '복합성' : rawSkinType;
     
     // 추천 논거 수집용
     const recommendationReasons = {
