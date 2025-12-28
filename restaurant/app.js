@@ -22,7 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
 function updateDbCount() {
     const total = RESTAURANTS.length;
     document.getElementById('dbCount').textContent = `${total}개 맛집`;
-    document.getElementById('aboutBadge').textContent = `${total}개 엄선`;
+    
+    // aboutBadge가 있을 때만 업데이트 (요소가 제거된 경우 에러 방지)
+    const aboutBadge = document.getElementById('aboutBadge');
+    if (aboutBadge) {
+        aboutBadge.textContent = `${total}개 엄선`;
+    }
 }
 
 // ===== Update Stats =====
