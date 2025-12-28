@@ -414,18 +414,37 @@ function renderCalendar() {
             const from = p.prfpdfrom?.replace(/-/g, '.');
             const to = p.prfpdto?.replace(/-/g, '.');
             return from <= dateStr && to >= dateStr;
+        }).sort((a, b) => {
+            // 가격에서 숫자 추출 (최고가 기준)
+            const priceA = extractMaxPrice(a.pcseguidance);
+            const priceB = extractMaxPrice(b.pcseguidance);
+            return priceB - priceA; // 높은 가격순
         });
         
+        const dayId = `day-${year}-${month}-${day}`;
+        const hasMore = dayPerformances.length > 5;
+        
         html += `
-            <div class="calendar-day ${isToday ? 'today' : ''}">
+            <div class="calendar-day ${isToday ? 'today' : ''}" id="${dayId}">
                 <div class="calendar-day-num">${day}</div>
-                ${dayPerformances.slice(0, 3).map(p => 
-                    `<div class="calendar-event" onclick="openModal('${p.mt20id}')" title="${decodeHtml(p.prfnm)}">
-                        ${p.poster ? `<img src="${p.poster}" class="calendar-event-poster" alt="">` : ''}
-                        <span>${escapeHtml(decodeHtml(p.prfnm))}</span>
-                    </div>`
-                ).join('')}
-                ${dayPerformances.length > 3 ? `<div style="font-size:10px;color:#94a3b8;">+${dayPerformances.length - 3}개</div>` : ''}
+                <div class="calendar-events-collapsed">
+                    ${dayPerformances.slice(0, 5).map(p => 
+                        `<div class="calendar-event" onclick="openModal('${p.mt20id}')" title="${decodeHtml(p.prfnm)}">
+                            ${p.poster ? `<img src="${p.poster}" class="calendar-event-poster" alt="">` : ''}
+                            <span>${escapeHtml(decodeHtml(p.prfnm))}</span>
+                        </div>`
+                    ).join('')}
+                    ${hasMore ? `<div class="calendar-more" onclick="expandDay('${dayId}', ${dayPerformances.length})">+${dayPerformances.length - 5}개 더보기</div>` : ''}
+                </div>
+                <div class="calendar-events-expanded" style="display:none;">
+                    ${dayPerformances.map(p => 
+                        `<div class="calendar-event" onclick="openModal('${p.mt20id}')" title="${decodeHtml(p.prfnm)}">
+                            ${p.poster ? `<img src="${p.poster}" class="calendar-event-poster" alt="">` : ''}
+                            <span>${escapeHtml(decodeHtml(p.prfnm))}</span>
+                        </div>`
+                    ).join('')}
+                    ${hasMore ? `<div class="calendar-more" onclick="collapseDay('${dayId}')">접기</div>` : ''}
+                </div>
             </div>
         `;
     }
@@ -563,4 +582,30 @@ function decodeHtml(text) {
     const div = document.createElement('div');
     div.innerHTML = text;
     return div.textContent;
+}
+
+// 가격 문자열에서 최고가 추출
+function extractMaxPrice(priceStr) {
+    if (!priceStr) return 0;
+    const numbers = priceStr.match(/[\d,]+/g);
+    if (!numbers) return 0;
+    const prices = numbers.map(n => parseInt(n.replace(/,/g, ''), 10)).filter(n => n > 100);
+    return prices.length > 0 ? Math.max(...prices) : 0;
+}
+
+// 캘린더 날짜 확장/축소
+function expandDay(dayId, total) {
+    const dayEl = document.getElementById(dayId);
+    if (dayEl) {
+        dayEl.querySelector('.calendar-events-collapsed').style.display = 'none';
+        dayEl.querySelector('.calendar-events-expanded').style.display = 'block';
+    }
+}
+
+function collapseDay(dayId) {
+    const dayEl = document.getElementById(dayId);
+    if (dayEl) {
+        dayEl.querySelector('.calendar-events-collapsed').style.display = 'block';
+        dayEl.querySelector('.calendar-events-expanded').style.display = 'none';
+    }
 }

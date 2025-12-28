@@ -556,9 +556,9 @@ body {
 }
 
 .calendar-event {
-    padding: 2px 4px;
-    background: var(--accent-gradient);
-    color: #fff;
+    padding: 2px 2px;
+    background: #e8e0f0;
+    color: #5b4b8a;
     border-radius: 3px;
     font-size: 11px;
     margin-bottom: 2px;
@@ -579,15 +579,27 @@ body {
 }
 
 .calendar-event-poster {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     border-radius: 2px;
     object-fit: cover;
     flex-shrink: 0;
 }
 
 .calendar-event:hover {
-    opacity: 0.9;
+    background: #d8cce8;
+}
+
+.calendar-more {
+    font-size: 10px;
+    color: var(--accent-violet);
+    cursor: pointer;
+    padding: 2px 4px;
+    margin-top: 2px;
+}
+
+.calendar-more:hover {
+    text-decoration: underline;
 }
 
 /* ===== Modal ===== */
