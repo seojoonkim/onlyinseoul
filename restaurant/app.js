@@ -79,7 +79,16 @@ function renderList() {
         return;
     }
     
-    container.innerHTML = filtered.map((r, i) => `
+    container.innerHTML = filtered.map((r, i) => {
+        // dong 필드 사용 또는 주소에서 추출
+        let dongText = r.dong || '';
+        if (!dongText && r.address) {
+            const dongMatch = r.address.match(/([가-힣]+동\d*가?)/);
+            if (dongMatch) dongText = dongMatch[1];
+        }
+        const locationText = dongText ? `${r.district} ${dongText}` : (r.district || '서울');
+        
+        return `
         <tr onclick="openModal('${r.id}')">
             <td class="cell-rank">${i + 1}</td>
             <td>
@@ -89,20 +98,20 @@ function renderList() {
                         : '📷'}
                 </div>
             </td>
-            <td class="cell-name">${r.name}</td>
+            <td><div class="cell-name" title="${r.name}">${r.name}</div></td>
             <td class="cell-cuisine">${r.cuisine || '-'}</td>
             <td class="cell-location">
-                <div>${r.district || '서울'}</div>
+                ${locationText}
             </td>
             <td>
                 <div class="cell-awards">
                     ${r.tags.map(t => `<span class="tag ${t.class}">${t.label}</span>`).join('')}
                 </div>
             </td>
-            <td class="cell-rating">${r.rating ? r.rating.toFixed(1) : '-'}</td>
+            <td class="cell-rating">⭐ ${r.rating ? r.rating.toFixed(1) : '-'}</td>
             <td class="cell-reviews">${r.reviews ? r.reviews.toLocaleString() : '-'}</td>
         </tr>
-    `).join('');
+    `}).join('');
 }
 
 // ===== Filters =====
@@ -169,28 +178,20 @@ function setupViewTabs() {
 function initMap() {
     if (map) return;
     
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 37.5400, lng: 127.0000 },
-        zoom: 12,
-        styles: [
-            { featureType: 'poi', stylers: [{ visibility: 'off' }] },
-            { featureType: 'transit', stylers: [{ visibility: 'off' }] }
-        ],
-        mapTypeControl: false,
-        streetViewControl: false,
-        fullscreenControl: false
-    });
+    map = L.map('map').setView([37.5400, 127.0000], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap © CARTO'
+    }).addTo(map);
     
     updateMapMarkers();
 }
 
 function updateMapMarkers() {
     // 기존 마커 제거
-    markers.forEach(m => m.setMap(null));
+    markers.forEach(m => map.removeLayer(m));
     markers = [];
     
     const filtered = filterRestaurants();
-    const infoWindow = new google.maps.InfoWindow();
     
     filtered.forEach(r => {
         if (!r.lat || !r.lng) return;
@@ -200,32 +201,23 @@ function updateMapMarkers() {
         if (r.categories.includes('Michelin')) color = '#f59e0b';
         else if (r.categories.includes('Blue Ribbon')) color = '#3b82f6';
         
-        const marker = new google.maps.Marker({
-            position: { lat: r.lat, lng: r.lng },
-            map: map,
-            title: r.name,
-            icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 10,
-                fillColor: color,
-                fillOpacity: 0.9,
-                strokeColor: '#fff',
-                strokeWeight: 2
-            }
-        });
+        const marker = L.circleMarker([r.lat, r.lng], {
+            radius: 10,
+            fillColor: color,
+            color: '#fff',
+            weight: 2,
+            fillOpacity: 0.9
+        }).addTo(map);
         
-        marker.addListener('click', () => {
-            infoWindow.setContent(`
-                <div style="min-width:160px;font-family:Pretendard,sans-serif;padding:4px;">
-                    <strong style="font-size:14px;">${r.name}</strong><br>
-                    <span style="font-size:12px;color:#666;">${r.cuisine || ''}</span><br>
-                    ${r.rating ? `<span style="color:#f59e0b;font-size:13px;">⭐ ${r.rating.toFixed(1)}</span>` : ''}
-                    <br>
-                    <button onclick="openModal('${r.id}')" style="margin-top:8px;padding:6px 12px;background:#4338ca;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:500;">상세 보기</button>
-                </div>
-            `);
-            infoWindow.open(map, marker);
-        });
+        marker.bindPopup(`
+            <div style="min-width:160px;font-family:Pretendard,sans-serif;padding:4px;">
+                <strong style="font-size:14px;">${r.name}</strong><br>
+                <span style="font-size:12px;color:#666;">${r.cuisine || ''}</span><br>
+                ${r.rating ? `<span style="color:#f59e0b;font-size:13px;">⭐ ${r.rating.toFixed(1)}</span>` : ''}
+                <br>
+                <button onclick="openModal('${r.id}')" style="margin-top:8px;padding:6px 12px;background:#4338ca;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:500;">상세 보기</button>
+            </div>
+        `);
         
         markers.push(marker);
     });
@@ -256,8 +248,6 @@ function openModal(id) {
     document.getElementById('modalTags').innerHTML = r.tags.map(t => 
         `<span class="tag ${t.class}">${t.label}</span>`
     ).join('');
-    document.getElementById('modalRating').textContent = r.rating ? `⭐ ${r.rating.toFixed(1)}` : '';
-    document.getElementById('modalReviewCount').textContent = r.reviews ? `${r.reviews.toLocaleString()} 리뷰` : '';
     document.getElementById('modalAddress').textContent = r.address || '-';
     document.getElementById('modalDistrict').textContent = r.district || '서울';
     document.getElementById('modalPhone').textContent = r.phone || '-';
@@ -272,9 +262,12 @@ function openModal(id) {
         callBtn.style.display = 'none';
     }
     
-    // Photos (최대 9개)
+    // 리뷰 히스토그램
+    renderReviewSummary(r);
+    
+    // Photos (최대 15개)
     if (r.photos && r.photos.length > 0) {
-        const photos = r.photos.slice(0, 9);
+        const photos = r.photos.slice(0, 15);
         document.getElementById('modalPhotos').innerHTML = `
             <div class="photos-grid">
                 ${photos.map((p, i) => `<img src="${p}" onclick="openGallery(${JSON.stringify(photos).replace(/"/g, '&quot;')}, ${i}, '공식 사진')">`).join('')}
@@ -300,6 +293,54 @@ function openModal(id) {
     
     document.getElementById('modal').classList.add('active');
     document.body.style.overflow = 'hidden';
+}
+
+function renderReviewSummary(r) {
+    const container = document.getElementById('modalReviewSummary');
+    
+    if (!r.reviewsList || r.reviewsList.length === 0) {
+        container.innerHTML = '<span class="no-data">리뷰 데이터 수집 예정</span>';
+        return;
+    }
+    
+    // 별점별 개수 계산
+    const distribution = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0};
+    r.reviewsList.forEach(rev => {
+        const star = Math.round(rev.rating);
+        if (star >= 1 && star <= 5) distribution[star]++;
+    });
+    
+    const total = r.reviewsList.length;
+    const avgRating = r.rating || (r.reviewsList.reduce((sum, rev) => sum + rev.rating, 0) / total);
+    
+    // 히스토그램 HTML 생성
+    let histogramHTML = '';
+    for (let star = 5; star >= 1; star--) {
+        const count = distribution[star];
+        const percent = total > 0 ? (count / total) * 100 : 0;
+        histogramHTML += `
+            <div class="rating-bar">
+                <span class="rating-label">${star}점</span>
+                <div class="rating-bar-track">
+                    <div class="rating-bar-fill" style="width: ${percent}%"></div>
+                </div>
+                <span class="rating-count">${count}</span>
+            </div>
+        `;
+    }
+    
+    container.innerHTML = `
+        <div class="review-summary-content">
+            <div class="review-score">
+                <div class="review-score-number">${avgRating.toFixed(1)}</div>
+                <div class="review-score-stars">${'★'.repeat(Math.round(avgRating))}${'☆'.repeat(5 - Math.round(avgRating))}</div>
+                <div class="review-score-count">${total.toLocaleString()}개 리뷰</div>
+            </div>
+            <div class="review-histogram">
+                ${histogramHTML}
+            </div>
+        </div>
+    `;
 }
 
 function renderReviews() {
