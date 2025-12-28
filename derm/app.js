@@ -797,12 +797,12 @@ function showModal(t) {
                     <p>${t.suitability.idealAge}</p>
                 </div>
                 <div class="suitability-recommend">
-                    <h4>✅ 추천</h4>
+                    <h4>○ 추천</h4>
                     <ul>${t.suitability.bestFor.map(b => `<li>${b}</li>`).join('')}</ul>
                 </div>
                 ${t.suitability.notRecommended.length ? `
                 <div class="suitability-caution">
-                    <h4>⚠️ 비추천</h4>
+                    <h4>△ 비추천</h4>
                     <ul>${t.suitability.notRecommended.map(n => `<li>${n}</li>`).join('')}</ul>
                 </div>
                 ` : ''}
@@ -908,6 +908,108 @@ function extractPrice(priceStr) {
     if (!priceStr) return 0;
     const match = priceStr.match(/(\d+)/);
     return match ? parseInt(match[1]) : 0;
+}
+
+// 추천 텍스트를 구조화된 HTML로 변환
+function formatRecommendation(text) {
+    if (!text) return '';
+    
+    // 플랜 섹션들을 분리 (2개 이상의 연속 줄바꿈으로 분리)
+    const sections = text.split(/\n{2,}/);
+    let html = '';
+    let currentPlan = null;
+    
+    sections.forEach((section, index) => {
+        section = section.trim();
+        if (!section) return;
+        
+        // 플랜 제목 패턴 감지 - 더 유연하게 (볼드 있거나 없거나)
+        // **A. 프리미엄 집중 케어 (약 433~1203만원)** 또는 A. 프리미엄 집중 케어 (약 433~1203만원)
+        const planMatch = section.match(/^\*{0,2}([ABC])\.\s*([^(]+)\s*\(([^)]+)\)\*{0,2}$/);
+        const finalMatch = section.match(/^\*{0,2}💡\s*종합\s*추천\*{0,2}$/);
+        
+        if (planMatch) {
+            // 이전 플랜 카드 닫기
+            if (currentPlan) {
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 새 플랜 카드 시작
+            const letter = planMatch[1];
+            const planName = planMatch[2].trim();
+            const priceRange = planMatch[3].trim();
+            const colorClass = letter === 'A' ? 'premium' : letter === 'B' ? 'balance' : 'efficient';
+            
+            currentPlan = { letter, planName, priceRange, colorClass, meta: [], description: [] };
+            
+            html += `
+                <div class="plan-card ${colorClass}">
+                    <div class="plan-header">
+                        <div class="plan-badge">${letter}</div>
+                        <div class="plan-title-wrap">
+                            <h4 class="plan-title">${planName}</h4>
+                            <span class="plan-price">${priceRange}</span>
+                        </div>
+                    </div>
+                    <div class="plan-content">
+            `;
+        } else if (finalMatch) {
+            // 이전 플랜 카드 닫기
+            if (currentPlan) {
+                html += `
+                        </div>
+                    </div>
+                `;
+                currentPlan = null;
+            }
+            
+            // 종합 추천 헤더
+            html += `
+                <div class="final-advice">
+                    <div class="final-advice-header">
+                        <span class="advice-icon">💡</span>
+                        <h4>종합 추천</h4>
+                    </div>
+                    <div class="final-advice-content">
+            `;
+        } else if (currentPlan) {
+            // 플랜 내용 추가
+            if (section.startsWith('핵심 시술:')) {
+                const value = section.replace('핵심 시술:', '').trim();
+                html += `<div class="plan-meta-item"><span class="meta-label">핵심 시술</span><span class="meta-value">${value}</span></div>`;
+            } else if (section.startsWith('구성:')) {
+                const value = section.replace('구성:', '').trim();
+                html += `<div class="plan-meta-item"><span class="meta-label">구성</span><span class="meta-value">${value}</span></div>`;
+            } else {
+                // 설명 텍스트
+                html += `<p class="plan-desc-text">${section}</p>`;
+            }
+        } else {
+            // 종합 추천 내용이거나 일반 텍스트
+            html += `<p>${section.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')}</p>`;
+        }
+    });
+    
+    // 마지막 플랜 카드 닫기
+    if (currentPlan) {
+        html += `
+                </div>
+            </div>
+        `;
+    }
+    
+    // 종합 추천 닫기
+    if (html.includes('final-advice-content') && !html.includes('</div>\n                </div>\n            `);')) {
+        html += `
+                    </div>
+                </div>
+        `;
+    }
+    
+    return html;
 }
 
 
@@ -2094,7 +2196,7 @@ function generateRuleBasedRecommendation(userData) {
                 const ageDiff = minimum - userAgeNum;
                 score -= Math.min(100, ageDiff * 10); // 나이 차이당 10점 감점, 최대 100점
                 if (youngWarning) {
-                    treatmentReasons.push(`⚠️ ${youngWarning}`);
+                    treatmentReasons.push(`△ ${youngWarning}`);
                 }
             } else if (userAgeNum > maximum) {
                 // 최대 연령 초과 - 약한 페널티
@@ -2225,7 +2327,7 @@ function generateRuleBasedRecommendation(userData) {
             if (skinTypeData.avoid && skinTypeData.avoid.some(a => treatmentName.includes(a))) {
                 const penaltyScore = 30 * (1 - (skinTypeData.penalty || 1.0));
                 score -= penaltyScore;
-                treatmentReasons.push(`⚠️ ${skinType} 피부에 주의 필요`);
+                treatmentReasons.push(`△ ${skinType} 피부에 주의 필요`);
             }
         }
         
@@ -3358,10 +3460,10 @@ function getSkinTypeCareAdvice(skinType) {
                 '클레이 마스크 (수분 흡수)'
             ],
             ingredients: [
-                '✅ 히알루론산, 세라마이드, 스쿠알란',
-                '✅ 글리세린, 판테놀, 시어버터',
-                '⚠️ 나이아신아마이드 (저농도로 시작)',
-                '❌ 알코올, 멘톨, 고농도 비타민C'
+                '○ 히알루론산, 세라마이드, 스쿠알란',
+                '○ 글리세린, 판테놀, 시어버터',
+                '△ 나이아신아마이드 (저농도로 시작)',
+                '✕ 알코올, 멘톨, 고농도 비타민C'
             ],
             routine: '아침: 클렌저 → 토너 → 히알루론산 세럼 → 수분크림 → 선크림\n저녁: 이중세안 → 토너 → 세럼 → 아이크림 → 수분크림 → 페이셜오일'
         },
@@ -3389,10 +3491,10 @@ function getSkinTypeCareAdvice(skinType) {
                 '손으로 얼굴 자주 만지기'
             ],
             ingredients: [
-                '✅ 나이아신아마이드, 살리실산(BHA), 징크',
-                '✅ 티트리, 위치하젤, 카올린',
-                '⚠️ 레티놀 (저농도부터, 건조 주의)',
-                '❌ 코코넛오일, 미네랄오일, 라놀린'
+                '○ 나이아신아마이드, 살리실산(BHA), 징크',
+                '○ 티트리, 위치하젤, 카올린',
+                '△ 레티놀 (저농도부터, 건조 주의)',
+                '✕ 코코넛오일, 미네랄오일, 라놀린'
             ],
             routine: '아침: 폼클렌저 → BHA 토너 → 수분젤 → 선크림(무기자차)\n저녁: 오일클렌저 → 폼클렌저 → 토너 → 나이아신아마이드 세럼 → 수분로션'
         },
@@ -3419,10 +3521,10 @@ function getSkinTypeCareAdvice(skinType) {
                 'U존에 매트 제형 사용'
             ],
             ingredients: [
-                '✅ 나이아신아마이드 (유수분 밸런스)',
-                '✅ 히알루론산 (T존/U존 모두 적합)',
-                '⚠️ T존: BHA / U존: AHA 분리 사용',
-                '❌ 전체 얼굴에 강한 오일 제품'
+                '○ 나이아신아마이드 (유수분 밸런스)',
+                '○ 히알루론산 (T존/U존 모두 적합)',
+                '△ T존: BHA / U존: AHA 분리 사용',
+                '✕ 전체 얼굴에 강한 오일 제품'
             ],
             routine: '아침: 젤클렌저 → 밸런싱토너 → 세럼 → T존 수분젤 + U존 크림 → 선크림\n저녁: 이중세안 → 토너 → T존 BHA + U존 수분세럼 → 보습제'
         },
@@ -3450,10 +3552,10 @@ function getSkinTypeCareAdvice(skinType) {
                 '급격한 온도 변화 (사우나, 냉/온 팩)'
             ],
             ingredients: [
-                '✅ 센텔라, 판테놀, 마데카소사이드',
-                '✅ 알로에, 녹차추출물, 베타글루칸',
-                '⚠️ 나이아신아마이드 (4% 이하 저농도)',
-                '❌ 레티놀, 고농도 비타민C, AHA/BHA'
+                '○ 센텔라, 판테놀, 마데카소사이드',
+                '○ 알로에, 녹차추출물, 베타글루칸',
+                '△ 나이아신아마이드 (4% 이하 저농도)',
+                '✕ 레티놀, 고농도 비타민C, AHA/BHA'
             ],
             routine: '아침: 물세안 또는 저자극클렌저 → 진정토너 → 진정세럼 → 보습크림 → 무기자차 선크림\n저녁: 저자극클렌저 → 진정토너 → 센텔라세럼 → 장벽강화크림'
         }
@@ -3515,7 +3617,7 @@ function displayError(error) {
     const html = `
         <div class="report-container">
             <div class="report-header error-header">
-                <h2 class="report-title">⚠️ 오류가 발생했습니다</h2>
+                <h2 class="report-title">△ 오류가 발생했습니다</h2>
                 <p class="report-subtitle">AI 상담 결과를 불러오는 중 문제가 발생했습니다.</p>
             </div>
             
@@ -3930,12 +4032,12 @@ function displayResult(response) {
                 <div class="header-content">
                     <span class="report-badge">ANALYSIS COMPLETE</span>
                     <h1 class="report-title-v2">AI 피부 시술 컨설팅 리포트</h1>
-                    <p class="report-subtitle">Personalized Treatment Recommendation by True Korea</p>
+                    <p class="report-subtitle">Personalized Treatment Recommendation by Only In Seoul</p>
                     <p class="report-datetime">📅 ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })} ${new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 기준</p>
                 </div>
                 
                 <!-- 분석 과정 시각화 (깔때기) -->
-                <div class="funnel-title">True Korea 피부과 가이드 분석 프로세스</div>
+                <div class="funnel-title">Only In Seoul 피부과 가이드 분석 프로세스</div>
                 <div class="funnel-container">
                     <div class="funnel-step step-1">
                         <div class="funnel-step-content">
@@ -3948,7 +4050,7 @@ function displayResult(response) {
                     </div>
                     <div class="funnel-arrow arrow-1">
                         <svg class="arrow-svg" viewBox="0 0 50 24" fill="none">
-                            <path d="M0 12H40M40 12L32 4M40 12L32 20" stroke="#c9a227" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M0 12H40M40 12L32 4M40 12L32 20" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/>
                         </svg>
                         <span class="arrow-text">필터링</span>
                     </div>
@@ -3963,7 +4065,7 @@ function displayResult(response) {
                     </div>
                     <div class="funnel-arrow arrow-2">
                         <svg class="arrow-svg" viewBox="0 0 50 24" fill="none">
-                            <path d="M0 12H40M40 12L32 4M40 12L32 20" stroke="#c9a227" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M0 12H40M40 12L32 4M40 12L32 20" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/>
                         </svg>
                         <span class="arrow-text">분석</span>
                     </div>
@@ -3978,7 +4080,7 @@ function displayResult(response) {
                     </div>
                     <div class="funnel-arrow arrow-3">
                         <svg class="arrow-svg" viewBox="0 0 50 24" fill="none">
-                            <path d="M0 12H40M40 12L32 4M40 12L32 20" stroke="#c9a227" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M0 12H40M40 12L32 4M40 12L32 20" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/>
                         </svg>
                         <span class="arrow-text">최적화</span>
                     </div>
@@ -3995,7 +4097,7 @@ function displayResult(response) {
             <!-- NEW: AI 연령 적합도 분석 배너 -->
             ${warningTreatments.length > 0 || avgIntensity >= 3 ? `
             <div class="age-analysis-banner ${warningTreatments.length > 0 ? 'warning' : 'info'}">
-                <div class="age-banner-icon">${warningTreatments.length > 0 ? '⚠️' : 'ℹ️'}</div>
+                <div class="age-banner-icon">${warningTreatments.length > 0 ? '△' : 'ℹ️'}</div>
                 <div class="age-banner-content">
                     <strong>${userData.age || ''} 연령대 분석</strong>
                     <p>
@@ -4297,7 +4399,7 @@ function displayResult(response) {
                     const txList = combo.treatments || [];
                     if (txList.length === 0) return '';
                     const labels = ['A', 'B', 'C'];
-                    const themes = ['gold', 'navy', 'gray'];
+                    const themes = ['premium', 'balance', 'efficient'];
                     
                     // 조합 내 시술 분석
                     const hasWarning = txList.some(t => t.youngWarning);
@@ -4342,7 +4444,7 @@ function displayResult(response) {
                         comboBadges.push(`<span class="combo-badge exp-required">💎 경험자 추천</span>`);
                     }
                     if (hasWarning) {
-                        comboBadges.push(`<span class="combo-badge has-warning">⚠️ 연령 주의</span>`);
+                        comboBadges.push(`<span class="combo-badge has-warning">△ 연령 주의</span>`);
                     }
                     
                     // 조합 타입 배지
@@ -4479,12 +4581,7 @@ function displayResult(response) {
                     <h3>💡 종합 추천 의견</h3>
                 </div>
                 <div class="recommendation-card">
-                    <div class="recommendation-main">${response.recommendation
-                        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\n\n/g, '</p><p>')
-                        .replace(/\n/g, '<br>')
-                        .replace(/^/, '<p>')
-                        .replace(/$/, '</p>')}</div>
+                    <div class="recommendation-main">${formatRecommendation(response.recommendation)}</div>
                     <div class="recommendation-sub">
                         <p>위 추천은 입력하신 정보와 ${treatments.length}개 시술 데이터베이스를 기반으로 분석한 결과입니다. 실제 시술 결정은 반드시 피부과 전문의와 대면 상담 후 개인 피부 상태를 고려하여 결정하시기 바랍니다.</p>
                     </div>
@@ -4608,7 +4705,7 @@ function displayResult(response) {
                     </div>
                     <div class="guide-card">
                         <div class="guide-card-header">
-                            <div class="guide-icon">⚠️</div>
+                            <div class="guide-icon">△</div>
                             <h4>상담 시 필수 고지사항</h4>
                         </div>
                         <ul class="guide-list">
@@ -4754,8 +4851,8 @@ function displayResult(response) {
             
             <!-- 푸터 -->
             <div class="report-footer-v2">
-                <div class="footer-logo">True Korea</div>
-                <p class="footer-main">본 리포트는 <strong>${treatments.length}개 피부과 시술 데이터</strong>와 <strong>임상 문헌 기반 시너지 분석</strong>을 통해 True Korea AI가 생성한 맞춤 분석 결과입니다.</p>
+                <div class="footer-logo">Only In Seoul</div>
+                <p class="footer-main">본 리포트는 <strong>${treatments.length}개 피부과 시술 데이터</strong>와 <strong>임상 문헌 기반 시너지 분석</strong>을 통해 Only In Seoul AI가 생성한 맞춤 분석 결과입니다.</p>
                 <p class="footer-sub">정확한 진단과 최종 시술 결정은 반드시 피부과 전문의와 대면 상담 후 진행하시기 바랍니다.</p>
             </div>
         </div>
