@@ -101,6 +101,14 @@ body {
     color: var(--text-tertiary);
 }
 
+.update-time-footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 24px;
+    padding: 16px 0;
+}
+
 .view-tabs { display: flex; gap: 6px; }
 
 .view-tab {
@@ -294,9 +302,22 @@ body {
 }
 
 .cell-title {
-    font-size: 16px !important;
+    font-size: 16px;
     font-weight: 600;
     color: var(--text-primary);
+}
+
+.title-main {
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.title-artist-mobile {
+    display: none;
+}
+
+.status-badge-inline {
+    display: none;
 }
 
 .cell-venue {
@@ -830,25 +851,80 @@ body {
     .filter-bar { gap: 6px; }
     .filter-btn { padding: 5px 10px; font-size: 11px; }
     
-    /* 테이블 모바일 */
-    .performance-table th.col-artist,
-    .performance-table td:nth-child(4),
-    .performance-table th.col-venue,
-    .performance-table td:nth-child(5),
-    .performance-table th.col-status,
-    .performance-table td:nth-child(7) { display: none; }
+    /* 테이블 모바일 - 장소, 상태, 아티스트 컬럼 숨김 */
+    .col-venue,
+    .cell-venue,
+    .col-status,
+    .cell-status,
+    .col-artist,
+    .cell-artist { display: none !important; }
+    
+    /* 제목 아래 아티스트 표시 */
+    .title-artist-mobile {
+        display: block !important;
+        font-size: 10px;
+        font-weight: 400;
+        color: var(--text-secondary);
+        margin-top: 4px;
+    }
+    
+    /* 제목 옆 상태 태그 */
+    .status-badge-inline {
+        display: inline-block !important;
+        padding: 2px 5px;
+        border-radius: 3px;
+        font-size: 9px;
+        font-weight: 500;
+        margin-left: 6px;
+        vertical-align: middle;
+    }
+    
+    .status-badge-inline.ongoing {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--status-ongoing);
+    }
+    
+    .status-badge-inline.upcoming {
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--status-upcoming);
+    }
+    
+    .status-badge-inline.ended {
+        background: rgba(148, 163, 184, 0.1);
+        color: var(--status-ended);
+    }
+    
+    .performance-table {
+        table-layout: fixed;
+        width: 100%;
+    }
     
     .performance-table th, 
-    .performance-table td { padding: 10px 8px; }
+    .performance-table td { 
+        padding: 8px 4px;
+        vertical-align: middle;
+        overflow: hidden;
+    }
     
-    .col-num { width: 36px; }
-    .col-poster { width: 50px; }
-    .col-title { min-width: 120px; }
-    .col-date { width: 100px; }
+    .performance-table th { 
+        font-size: 10px; 
+    }
     
-    .cell-poster { width: 42px; height: 56px; }
-    .cell-title { font-size: 13px; }
-    .cell-date { font-size: 11px; }
+    /* 비율 기반 컬럼 너비 - 4컬럼 */
+    .col-num { width: 8%; text-align: center !important; }
+    .col-poster { width: 15%; }
+    .col-title { width: 52%; }
+    .col-date { width: 25%; }
+    
+    .cell-num { text-align: center; font-size: 11px; }
+    .cell-poster { width: 40px; height: 52px; }
+    .cell-title { 
+        font-size: 12px !important;
+        font-weight: 600;
+    }
+    .cell-date { 
+        font-size: 10px !important;
+    }
     
     /* 모바일 모달 - 전체화면 */
     .modal-overlay {

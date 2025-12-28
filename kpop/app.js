@@ -168,10 +168,37 @@ function filterAndRender() {
         return true;
     });
     
-    // Sort by date
+    // 3일 전 날짜 계산
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+    const threeDaysAgoStr = threeDaysAgo.toISOString().split('T')[0].replace(/-/g, '.');
+    
+    // 3일 이상 지난 완료 공연 제외
+    filteredPerformances = filteredPerformances.filter(p => {
+        if (p.prfstate === '공연완료') {
+            const endDate = p.prfpdto?.replace(/-/g, '.') || '';
+            return endDate >= threeDaysAgoStr;
+        }
+        return true;
+    });
+    
+    // Sort by status priority, then by date
     filteredPerformances.sort((a, b) => {
+        // 상태 우선순위: 완료(0) → 공연중(1) → 공연예정(2)
+        const statusOrder = { '공연완료': 0, '공연중': 1, '공연예정': 2 };
+        const statusA = statusOrder[a.prfstate] ?? 2;
+        const statusB = statusOrder[b.prfstate] ?? 2;
+        
+        if (statusA !== statusB) {
+            return statusA - statusB;
+        }
+        
+        // 같은 상태면 날짜순 (완료는 최근 것 먼저)
         const dateA = a.prfpdfrom?.replace(/\./g, '-') || '';
         const dateB = b.prfpdfrom?.replace(/\./g, '-') || '';
+        if (a.prfstate === '공연완료') {
+            return dateB.localeCompare(dateA); // 최근 완료 먼저
+        }
         return dateA.localeCompare(dateB);
     });
     
@@ -241,7 +268,10 @@ function renderList() {
                         }
                     </div>
                 </td>
-                <td class="cell-title">${escapeHtml(decodeHtml(p.prfnm))}</td>
+                <td class="cell-title">
+                    <div class="title-main">${escapeHtml(decodeHtml(p.prfnm))} <span class="status-badge-inline ${statusClass}">${statusText}</span></div>
+                    <div class="title-artist-mobile">${escapeHtml(decodeHtml(artist))}</div>
+                </td>
                 <td class="cell-artist">${escapeHtml(decodeHtml(artist))}</td>
                 <td class="cell-venue">${escapeHtml(decodeHtml(p.fcltynm || '-'))}</td>
                 <td class="cell-date">${dateText}</td>
