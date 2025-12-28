@@ -1,5 +1,6 @@
 // ===== Config =====
-const API_URL = 'https://kopis-api.seojoon-kim.workers.dev';
+const SUPABASE_URL = 'https://iausfassbdmpieinhaba.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhdXNmYXNzYmRtcGllaW5oYWJhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY3NTg1ODQsImV4cCI6MjA4MjMzNDU4NH0.E6zhK_NvH8MMjAbGU9yJruJPytwtL8TeJm-pqWhIduc';
 
 // ===== State =====
 let performances = [];
@@ -16,23 +17,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateMonthFilters();
 });
 
+// ===== Supabase Query Helper =====
+async function supabaseQuery(endpoint) {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
+        headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+    });
+    
+    if (!response.ok) {
+        throw new Error('Failed to fetch from Supabase');
+    }
+    
+    return response.json();
+}
+
 // ===== Load Data =====
 async function loadPerformances() {
     try {
-        const response = await fetch(`${API_URL}/performances`);
-        const data = await response.json();
-        
-        performances = data.performances || [];
+        // Supabase에서 직접 조회 (정렬: 시작일 기준)
+        performances = await supabaseQuery('performances?select=*&order=prfpdfrom.asc');
         
         // Update stats
         updateStats();
         updateDbCount();
         
-        // Update time
-        if (data.updated) {
-            const updateDate = new Date(data.updated);
+        // Update time (가장 최근 업데이트된 공연 기준)
+        if (performances.length > 0) {
+            const lastUpdated = performances.reduce((latest, p) => {
+                const pDate = new Date(p.updated_at);
+                return pDate > latest ? pDate : latest;
+            }, new Date(0));
+            
             document.getElementById('updateTime').textContent = 
-                `업데이트: ${updateDate.toLocaleDateString('ko-KR')} ${updateDate.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}`;
+                `업데이트: ${lastUpdated.toLocaleDateString('ko-KR')} ${lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}`;
         }
         
         // Hide loading
@@ -95,7 +114,6 @@ function updateMonthFilters() {
         btn.addEventListener('click', () => {
             const month = btn.dataset.month;
             
-            // Toggle
             if (activeFilters.month === month) {
                 activeFilters.month = null;
                 btn.classList.remove('active');
@@ -112,7 +130,6 @@ function updateMonthFilters() {
 
 // ===== Filters =====
 function setupFilters() {
-    // Status filter
     document.querySelectorAll('#statusFilters .filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('#statusFilters .filter-btn').forEach(b => b.classList.remove('active'));
@@ -228,13 +245,11 @@ function renderCalendar() {
     const days = ['일', '월', '화', '수', '목', '금', '토'];
     let html = days.map(d => `<div class="calendar-day-header">${d}</div>`).join('');
     
-    // Previous month days
     const prevLastDay = new Date(year, month, 0).getDate();
     for (let i = startDay - 1; i >= 0; i--) {
         html += `<div class="calendar-day other-month"><div class="calendar-day-num">${prevLastDay - i}</div></div>`;
     }
     
-    // Current month days
     const today = new Date();
     for (let day = 1; day <= lastDay.getDate(); day++) {
         const dateStr = `${year}.${String(month + 1).padStart(2, '0')}.${String(day).padStart(2, '0')}`;
@@ -257,7 +272,6 @@ function renderCalendar() {
         `;
     }
     
-    // Next month days
     const remainingDays = 42 - (startDay + lastDay.getDate());
     for (let i = 1; i <= remainingDays; i++) {
         html += `<div class="calendar-day other-month"><div class="calendar-day-num">${i}</div></div>`;
@@ -265,7 +279,6 @@ function renderCalendar() {
     
     document.getElementById('calendarGrid').innerHTML = html;
     
-    // Nav buttons
     document.getElementById('prevMonth').onclick = () => {
         currentMonth.setMonth(currentMonth.getMonth() - 1);
         renderCalendar();
@@ -288,11 +301,12 @@ function setupModal() {
     });
 }
 
-async function openModal(mt20id) {
+function openModal(mt20id) {
+    // Supabase에서 이미 모든 데이터를 가져왔으므로 로컬에서 찾기
     const p = performances.find(perf => perf.mt20id === mt20id);
     if (!p) return;
     
-    // Basic info
+    // 기본 정보
     document.getElementById('modalPoster').src = p.poster || '';
     document.getElementById('modalName').textContent = p.prfnm;
     
@@ -306,54 +320,49 @@ async function openModal(mt20id) {
     document.getElementById('modalDate').textContent = dateText;
     document.getElementById('modalVenue').textContent = p.fcltynm || '-';
     
-    // KOPIS link
+    // KOPIS 링크
     document.getElementById('modalKopis').href = `https://www.kopis.or.kr/por/db/pblprfr/pblprfrView.do?menuId=MNU_00020&mt20Id=${mt20id}`;
     
-    // Try to get detailed info
-    try {
-        const response = await fetch(`${API_URL}/performance/${mt20id}`);
-        const detail = await response.json();
-        
-        if (detail && !detail.error) {
-            // Cast
-            if (detail.prfcast) {
-                document.getElementById('modalCastRow').style.display = 'flex';
-                document.getElementById('modalCast').textContent = detail.prfcast;
-            } else {
-                document.getElementById('modalCastRow').style.display = 'none';
-            }
-            
-            // Price
-            if (detail.pcseguidance) {
-                document.getElementById('modalPriceRow').style.display = 'flex';
-                document.getElementById('modalPrice').textContent = detail.pcseguidance;
-            } else {
-                document.getElementById('modalPriceRow').style.display = 'none';
-            }
-            
-            // Runtime
-            if (detail.prfruntime) {
-                document.getElementById('modalRuntimeRow').style.display = 'flex';
-                document.getElementById('modalRuntime').textContent = detail.prfruntime;
-            } else {
-                document.getElementById('modalRuntimeRow').style.display = 'none';
-            }
-            
-            // Age
-            if (detail.prfage) {
-                document.getElementById('modalAgeRow').style.display = 'flex';
-                document.getElementById('modalAge').textContent = detail.prfage;
-            } else {
-                document.getElementById('modalAgeRow').style.display = 'none';
-            }
-        }
-    } catch (error) {
-        console.log('Could not load detail:', error);
-        // Hide optional fields
+    // 출연
+    if (p.prfcast) {
+        document.getElementById('modalCastRow').style.display = 'flex';
+        document.getElementById('modalCast').textContent = p.prfcast;
+    } else {
         document.getElementById('modalCastRow').style.display = 'none';
+    }
+    
+    // 가격
+    if (p.pcseguidance) {
+        document.getElementById('modalPriceRow').style.display = 'flex';
+        document.getElementById('modalPrice').textContent = p.pcseguidance;
+    } else {
         document.getElementById('modalPriceRow').style.display = 'none';
+    }
+    
+    // 런타임
+    if (p.prfruntime) {
+        document.getElementById('modalRuntimeRow').style.display = 'flex';
+        document.getElementById('modalRuntime').textContent = p.prfruntime;
+    } else {
         document.getElementById('modalRuntimeRow').style.display = 'none';
+    }
+    
+    // 관람연령
+    if (p.prfage) {
+        document.getElementById('modalAgeRow').style.display = 'flex';
+        document.getElementById('modalAge').textContent = p.prfage;
+    } else {
         document.getElementById('modalAgeRow').style.display = 'none';
+    }
+    
+    // 예매 버튼 (relates는 JSONB로 저장됨)
+    const ticketBtn = document.getElementById('modalTicket');
+    if (p.relates && p.relates.length > 0) {
+        ticketBtn.href = p.relates[0].url;
+        ticketBtn.textContent = `🎫 ${p.relates[0].name}에서 예매`;
+        ticketBtn.style.display = 'flex';
+    } else {
+        ticketBtn.style.display = 'none';
     }
     
     document.getElementById('modal').classList.add('active');

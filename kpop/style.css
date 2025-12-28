@@ -456,6 +456,12 @@ body {
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.modal::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
 }
 
 .modal-close {
@@ -571,6 +577,16 @@ body {
 .action-btn.primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(67, 56, 202, 0.3);
+}
+
+.action-btn.secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+
+.action-btn.secondary:hover {
+    background: var(--border);
 }
 
 /* ===== Responsive ===== */
