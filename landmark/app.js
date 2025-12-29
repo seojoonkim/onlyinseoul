@@ -477,19 +477,24 @@ document.addEventListener('keydown', (e) => {
 // 점수 상세 항목으로 스크롤 이동
 function scrollToScoreDetail(key) {
     const targetEl = document.getElementById(`score-detail-${key}`);
-    const modalColRight = document.querySelector('.modal-col-right');
     const scoreSummary = document.getElementById('scoreSummarySection');
     
-    if (targetEl && modalColRight && scoreSummary) {
+    // 모바일에서는 modal-body-two-col이 스크롤 컨테이너
+    const isMobile = window.innerWidth <= 768;
+    const scrollContainer = isMobile 
+        ? document.querySelector('.modal-body-two-col') 
+        : document.querySelector('.modal-col-right');
+    
+    if (targetEl && scrollContainer && scoreSummary) {
         // sticky 섹션 높이 계산
         const stickyHeight = scoreSummary.offsetHeight;
         const targetRect = targetEl.getBoundingClientRect();
-        const containerRect = modalColRight.getBoundingClientRect();
+        const containerRect = scrollContainer.getBoundingClientRect();
         
-        // 현재 스크롤 위치 + 타겟까지의 거리 - sticky 높이 - 여유 공간(상세 평가 제목 보이도록)
-        const scrollTop = modalColRight.scrollTop + (targetRect.top - containerRect.top) - stickyHeight - 60;
+        // 현재 스크롤 위치 + 타겟까지의 거리 - sticky 높이 - 여유 공간
+        const scrollTop = scrollContainer.scrollTop + (targetRect.top - containerRect.top) - stickyHeight - 60;
         
-        modalColRight.scrollTo({
+        scrollContainer.scrollTo({
             top: scrollTop,
             behavior: 'smooth'
         });
@@ -503,12 +508,17 @@ function scrollToScoreDetail(key) {
 // sticky 상태 감지하여 그림자 효과 추가
 function setupStickyObserver() {
     const scoreSummary = document.getElementById('scoreSummarySection');
-    const modalColRight = document.querySelector('.modal-col-right');
     
-    if (scoreSummary && modalColRight) {
-        modalColRight.addEventListener('scroll', () => {
+    // 모바일에서는 modal-body-two-col이 스크롤 컨테이너
+    const isMobile = window.innerWidth <= 768;
+    const scrollContainer = isMobile 
+        ? document.querySelector('.modal-body-two-col') 
+        : document.querySelector('.modal-col-right');
+    
+    if (scoreSummary && scrollContainer) {
+        scrollContainer.addEventListener('scroll', () => {
             const rect = scoreSummary.getBoundingClientRect();
-            const parentRect = modalColRight.getBoundingClientRect();
+            const parentRect = scrollContainer.getBoundingClientRect();
             
             // sticky 상태인지 확인 (상단에 붙었을 때)
             if (rect.top <= parentRect.top + 5) {
