@@ -656,12 +656,6 @@ body {
 .modal-overlay.active {
     display: flex;
     opacity: 1;
-    animation: overlayFadeIn 0.3s ease forwards;
-}
-
-@keyframes overlayFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
 }
 
 .modal {
@@ -676,18 +670,12 @@ body {
     -ms-overflow-style: none; /* IE/Edge */
     opacity: 0;
     transform: translateY(20px) scale(0.98);
-    animation: modalSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes modalSlideIn {
-    from { 
-        opacity: 0; 
-        transform: translateY(20px) scale(0.98); 
-    }
-    to { 
-        opacity: 1; 
-        transform: translateY(0) scale(1); 
-    }
+.modal-overlay.active .modal {
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 
 .modal::-webkit-scrollbar {
