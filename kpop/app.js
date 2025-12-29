@@ -271,6 +271,7 @@ function renderList() {
                 <td class="cell-title">
                     <div class="title-main">${escapeHtml(decodeHtml(p.prfnm))} <span class="status-badge-inline ${statusClass}">${statusText}</span></div>
                     <div class="title-artist-mobile">${escapeHtml(decodeHtml(artist))}</div>
+                    <div class="title-date-mobile">${dateText}</div>
                 </td>
                 <td class="cell-artist">${escapeHtml(decodeHtml(artist))}</td>
                 <td class="cell-venue">${escapeHtml(decodeHtml(p.fcltynm || '-'))}</td>

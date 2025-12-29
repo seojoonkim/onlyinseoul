@@ -316,6 +316,10 @@ body {
     display: none;
 }
 
+.title-date-mobile {
+    display: none;
+}
+
 .status-badge-inline {
     display: none;
 }
@@ -901,7 +905,7 @@ body {
     
     .performance-table th, 
     .performance-table td { 
-        padding: 8px 4px;
+        padding: 8px 2px;
         vertical-align: middle;
         overflow: hidden;
     }
@@ -911,13 +915,13 @@ body {
     }
     
     /* 비율 기반 컬럼 너비 - 4컬럼 */
-    .col-num { width: 8%; text-align: center !important; }
-    .col-poster { width: 15%; }
-    .col-title { width: 52%; }
-    .col-date { width: 25%; }
+    .col-num { width: 24px; text-align: center !important; }
+    .col-poster { width: 48px; }
+    .col-title { width: auto; }
+    .col-date { width: 72px; }
     
     .cell-num { text-align: center; font-size: 11px; }
-    .cell-poster { width: 40px; height: 52px; }
+    .cell-poster { width: 42px; height: 56px; }
     .cell-title { 
         font-size: 12px !important;
         font-weight: 600;
@@ -1022,13 +1026,14 @@ body {
     
     .main-container { padding: 12px; }
     
-    /* 날짜 컬럼도 숨기기 */
-    .performance-table th.col-date,
-    .performance-table td:nth-child(5) { display: none; }
+    /* 기간 컬럼은 유지, 날짜 모바일 표시 숨김 */
+    .title-date-mobile { display: none !important; }
     
-    .col-num { width: 32px; }
-    .cell-num { font-size: 12px; }
-    .cell-title { font-size: 12px; }
+    .col-num { width: 28px; }
+    .cell-num { font-size: 11px; }
+    .cell-poster { width: 38px; height: 50px; }
+    .cell-title { font-size: 11px !important; }
+    .cell-date { font-size: 9px !important; }
     
     .update-time { display: none; }
     
