@@ -142,12 +142,12 @@ function updateStats() {
         museum: allData.filter(d => d.category === 'museum').length
     };
     
-    document.getElementById('palaceCount').textContent = counts.palace;
-    document.getElementById('viewpointCount').textContent = counts.viewpoint;
-    document.getElementById('shoppingCount').textContent = counts.shopping;
-    document.getElementById('hipplaceCount').textContent = counts.hipplace;
-    document.getElementById('natureCount').textContent = counts.nature;
-    document.getElementById('museumCount').textContent = counts.museum;
+    // 카테고리 문장 업데이트
+    const categoriesEl = document.getElementById('aboutCategories');
+    if (categoriesEl) {
+        categoriesEl.textContent = `고궁/역사 ${counts.palace}곳, 전망/야경 ${counts.viewpoint}곳, 쇼핑 ${counts.shopping}곳, 힙플레이스 ${counts.hipplace}곳, 공원/자연 ${counts.nature}곳, 박물관/미술관 ${counts.museum}곳`;
+    }
+    
     document.getElementById('dbCount').textContent = `${allData.length}개 명소`;
 }
 
@@ -278,27 +278,45 @@ function renderMap() {
                 }
             });
             
-            // InfoWindow 내용 (아이콘 + 설명 + 링크) - 이미지 필드 없으므로 아이콘 사용
+            // 카테고리 배지 HTML
+            const categoryBadge = `<span style="
+                display:inline-block;
+                padding:2px 5px;
+                border-radius:4px;
+                font-size:9px;
+                font-weight:600;
+                white-space:nowrap;
+                margin-left:6px;
+                vertical-align:middle;
+                background:${getCategoryColor(item.category)}22;
+                color:${getCategoryColor(item.category)};
+            ">${cat.icon} ${cat.name || ''}</span>`;
+            
+            // InfoWindow 내용 (맛집과 동일한 스타일)
             const infoContent = `
-                <div style="display:flex;width:300px;background:#fff;">
-                    <div style="width:90px;height:130px;flex-shrink:0;background:linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                <div style="display:flex;width:300px;height:150px;background:#fff;overflow:hidden;">
+                    <div style="width:110px;height:150px;flex-shrink:0;background:linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;">
                         <span style="font-size:40px;">${cat.icon || '📍'}</span>
                     </div>
-                    <div style="width:210px;padding:12px;display:flex;flex-direction:column;box-sizing:border-box;">
-                        <strong style="font-size:15px;color:#1e1b4b;margin-bottom:8px;line-height:1.3;">${item.name_ko}</strong>
-                        <p style="font-size:13px;color:#475569;margin:0;line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;flex:1;">${item.summary || ''}</p>
+                    <div style="width:190px;padding:14px;display:flex;flex-direction:column;box-sizing:border-box;height:150px;">
+                        <strong style="font-size:14px;color:#1e1b4b;margin-bottom:8px;line-height:1.3;">${item.name_ko}</strong>
+                        <p style="font-size:11px;color:#475569;margin:0 0 6px 0;line-height:1.5;">
+                            서울${categoryBadge}
+                        </p>
+                        <p style="font-size:11px;color:#64748b;margin:0;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;flex:1;">
+                            ${item.summary || ''}
+                        </p>
                         <button onclick="openModal('${item.id}')" style="
                             width:100%;
                             padding:8px 0;
-                            margin-top:10px;
+                            margin-top:auto;
                             background:linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
                             color:white;
                             border:none;
                             border-radius:6px;
                             cursor:pointer;
                             font-weight:600;
-                            font-size:12px;
-                            flex-shrink:0;
+                            font-size:11px;
                         ">자세히 보기</button>
                     </div>
                 </div>

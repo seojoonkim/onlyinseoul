@@ -162,30 +162,26 @@ body {
     font-size: 13px;
     color: var(--text-secondary);
     line-height: 1.6;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
-.about-stats {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+.about-categories {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin: 0;
 }
 
-.about-stat {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+.about-categories strong {
+    color: var(--accent-violet);
+    font-weight: 600;
 }
-
-.about-stat-icon { font-size: 13px; }
-.about-stat-num { font-size: 14px; font-weight: 600; color: var(--text-secondary); }
-.about-stat-label { font-size: 12px; color: var(--text-tertiary); }
 
 /* ===== Filters ===== */
 .filter-bar {
     display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 6px;
+    margin-bottom: 6px;
     flex-wrap: wrap;
     align-items: center;
 }
@@ -193,7 +189,7 @@ body {
 .filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
 
 .filter-btn {
-    padding: 6px 12px;
+    padding: 6px 8px;
     border: 1px solid var(--border);
     border-radius: 16px;
     background: var(--bg-secondary);
@@ -1444,7 +1440,7 @@ body {
 
 /* 점수 필터 버튼 (카테고리 필터와 동일한 스타일) */
 .score-filter-btn {
-    padding: 6px 12px;
+    padding: 6px 8px;
     border: 1px solid var(--border);
     border-radius: 16px;
     background: var(--bg-secondary);
