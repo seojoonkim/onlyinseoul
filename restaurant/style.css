@@ -642,13 +642,13 @@ body {
 }
 
 .modal-header {
-    padding: 12px 0px 8px 20px;
+    padding: 16px 20px;
     background: linear-gradient(135deg, #f8fafc, #eef2ff);
+    border-bottom: 1px solid var(--border);
     position: relative;
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 16px;
 }
 
@@ -659,13 +659,16 @@ body {
     transform: translateY(-50%);
     width: 32px;
     height: 32px;
-    border-radius: 50%;
+    border-radius: 6px;
     border: none;
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
+    background: transparent;
+    color: var(--text-tertiary);
     cursor: pointer;
-    font-size: 16px;
+    font-size: 22px;
     transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-close:hover {
@@ -714,6 +717,12 @@ body {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.modal-left::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 .modal-right {
@@ -1430,32 +1439,6 @@ body {
     width: 28px;
     text-align: right;
     flex-shrink: 0;
-}
-
-/* Modal Close Button */
-.modal-close {
-    position: absolute;
-    top: 18px;
-    right: 20px;
-    width: auto;
-    height: auto;
-    border: none;
-    background: transparent;
-    border-radius: 0;
-    font-size: 28px;
-    color: var(--text-tertiary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition);
-    line-height: 1;
-    padding: 0;
-}
-
-.modal-close:hover {
-    background: transparent;
-    color: var(--text-primary);
 }
 
 /* ===== Map Popup Styles ===== */
