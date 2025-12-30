@@ -1,12 +1,20 @@
 // ===== State =====
 let map = null;
 let markers = [];
-let activeFilters = { cuisine: '한식', award: null };
+let activeFilters = { cuisine: null, award: null, day: null };
 
 // Gallery State
 let currentGallery = [];
 let currentGalleryIndex = 0;
 let currentGalleryCaption = '';
+
+// ===== Helper Functions =====
+// 주소에서 구 이름 추출 (예: "서울특별시 강남구 ..." -> "강남구")
+function extractDistrict(address) {
+    if (!address) return '';
+    const match = address.match(/([가-힣]+구)/);
+    return match ? match[1] : '';
+}
 
 // ===== Initialize =====
 document.addEventListener('DOMContentLoaded', () => {
@@ -66,6 +74,18 @@ function filterRestaurants() {
             if (!r.categories.includes(activeFilters.award)) return false;
         }
         
+        // Day filter (null = 전체, 아니면 해당 요일 영업하는 곳만)
+        if (activeFilters.day !== null && r.hours && r.hours.days) {
+            const dayIndex = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
+            const idx = dayIndex[activeFilters.day];
+            if (idx !== undefined && r.hours.days[idx]) {
+                // isOpen이 false면 휴무 → 제외
+                if (!r.hours.days[idx].isOpen) {
+                    return false;
+                }
+            }
+        }
+        
         return true;
     });
 }
@@ -89,13 +109,8 @@ function renderList() {
     }
     
     container.innerHTML = filtered.map((r, i) => {
-        // dong 필드 사용 또는 주소에서 추출
-        let dongText = r.dong || '';
-        if (!dongText && r.address) {
-            const dongMatch = r.address.match(/([가-힣]+동\d*가?)/);
-            if (dongMatch) dongText = dongMatch[1];
-        }
-        const locationText = dongText ? `${r.district} ${dongText}` : (r.district || '서울');
+        // 주소에서 지역 추출
+        const locationText = extractDistrict(r.address) || '서울';
         
         return `
         <tr onclick="openModal('${r.id}')">
@@ -168,6 +183,28 @@ function setupFilters() {
             if (map) updateMapMarkers();
         });
     });
+    
+    // Day: 버튼 방식 (하나만 선택)
+    document.querySelectorAll('#dayFilters .filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const day = btn.dataset.day;
+            
+            // 이미 선택된 버튼이면 무시
+            if (btn.classList.contains('active')) {
+                return;
+            }
+            
+            // 다른 버튼 클릭하면 교체
+            document.querySelectorAll('#dayFilters .filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // "all"이면 null, 아니면 해당 day
+            activeFilters.day = (day === 'all') ? null : day;
+            
+            renderList();
+            if (map) updateMapMarkers();
+        });
+    });
 }
 
 // ===== View Tabs =====
@@ -206,9 +243,12 @@ function initGoogleMap() {
     }
 }
 
+// 전역으로 노출
+window.initGoogleMap = initGoogleMap;
+
 function initMap() {
     // 구글 API가 아직 로드되지 않았으면 대기
-    if (!window.googleMapsReady) {
+    if (!window.google || !window.google.maps) {
         setTimeout(initMap, 100);
         return;
     }
@@ -222,28 +262,32 @@ function initMap() {
         return;
     }
     
-    map = new google.maps.Map(mapEl, {
-        center: { lat: 37.5400, lng: 127.0000 },
-        zoom: 12,
-        styles: [
-            {
-                featureType: 'poi',
-                elementType: 'labels',
-                stylers: [{ visibility: 'off' }]
+    try {
+        map = new google.maps.Map(mapEl, {
+            center: { lat: 37.5400, lng: 127.0000 },
+            zoom: 12,
+            styles: [
+                {
+                    featureType: 'poi',
+                    elementType: 'labels',
+                    stylers: [{ visibility: 'off' }]
+                }
+            ]
+        });
+        
+        // 지도 클릭 시 InfoWindow 닫기
+        map.addListener('click', () => {
+            if (currentInfoWindow) {
+                currentInfoWindow.close();
+                currentInfoWindow = null;
             }
-        ]
-    });
-    
-    // 지도 클릭 시 InfoWindow 닫기
-    map.addListener('click', () => {
-        if (currentInfoWindow) {
-            currentInfoWindow.close();
-            currentInfoWindow = null;
-        }
-    });
-    
-    mapInitialized = true;
-    updateMapMarkers();
+        });
+        
+        mapInitialized = true;
+        updateMapMarkers();
+    } catch (e) {
+        console.error('Map initialization error:', e);
+    }
 }
 
 // 음식 종류별 색상 반환
@@ -370,7 +414,7 @@ function updateMapMarkers() {
                 <div style="width:210px;padding:12px;display:flex;flex-direction:column;box-sizing:border-box;">
                     <strong style="font-size:14px;color:#1e1b4b;margin-bottom:6px;line-height:1.3;">${r.name}</strong>
                     <p style="font-size:11px;color:#475569;margin:0;line-height:1.5;">
-                        ${r.cuisine || ''} · ${r.district || ''}${badgesHtml}
+                        ${r.cuisine || ''} · ${extractDistrict(r.address)}${badgesHtml}
                     </p>
                     <p style="font-size:11px;color:#475569;margin:4px 0 0 0;line-height:1.5;">
                         ${r.rating ? '⭐ ' + r.rating.toFixed(1) + ' (' + (r.reviews || 0).toLocaleString() + ')' : ''}
@@ -468,8 +512,65 @@ function openModal(id) {
         descSection.style.display = 'none';
     }
     
-    document.getElementById('modalAddress').textContent = r.address || '-';
-    document.getElementById('modalDistrict').textContent = r.district || '서울';
+    // 주소: 완전한 주소 표시
+    const fullAddress = r.address || '-';
+    document.getElementById('modalAddress').textContent = fullAddress;
+    
+    // 운영시간
+    const hoursRow = document.getElementById('hoursRow');
+    const modalHours = document.getElementById('modalHours');
+    if (hoursRow && modalHours) {
+        if (r.openingHours && r.openingHours.length > 0) {
+            // 오늘 요일 구하기 (0=일요일, 1=월요일, ...)
+            const today = new Date().getDay();
+            const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+            
+            let hoursHTML = '<div class="hours-grid">';
+            r.openingHours.forEach((entry, idx) => {
+                const dayIdx = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'].indexOf(entry.day);
+                const isToday = dayIdx === today;
+                const isClosed = entry.hours === '휴무일' || entry.hours === '휴무';
+                
+                // 시간 파싱: 여는시간과 닫는시간 분리
+                let openTime = '';
+                let closeTime = '';
+                
+                if (!isClosed) {
+                    // "PM 12:00~3:30, PM 6:00~10:00" 같은 형식 처리
+                    const timeStr = entry.hours
+                        .replace(/AM /g, '')
+                        .replace(/PM /g, '');
+                    
+                    // 여러 시간대가 있으면 첫번째와 마지막 사용
+                    const ranges = timeStr.split(',').map(s => s.trim());
+                    if (ranges.length > 0) {
+                        const firstRange = ranges[0].split('~');
+                        const lastRange = ranges[ranges.length - 1].split('~');
+                        openTime = firstRange[0] || '';
+                        closeTime = lastRange[1] || lastRange[0] || '';
+                    }
+                }
+                
+                hoursHTML += `
+                    <div class="hours-col ${isToday ? 'today' : ''} ${isClosed ? 'closed' : ''}">
+                        <span class="hours-day">${dayNames[dayIdx]}</span>
+                        ${isClosed ? 
+                            '<span class="hours-closed">휴무</span>' : 
+                            `<span class="hours-open">${openTime}</span>
+                             <span class="hours-divider">|</span>
+                             <span class="hours-close">${closeTime}</span>`
+                        }
+                    </div>
+                `;
+            });
+            hoursHTML += '</div>';
+            modalHours.innerHTML = hoursHTML;
+            hoursRow.style.display = 'flex';
+        } else {
+            hoursRow.style.display = 'none';
+        }
+    }
+    
     document.getElementById('modalPhone').textContent = r.phone || '-';
     document.getElementById('modalChef').textContent = r.chef || '-';
     
@@ -485,9 +586,9 @@ function openModal(id) {
     // 리뷰 히스토그램
     renderReviewSummary(r);
     
-    // Photos (최대 15개)
+    // Photos (최대 10개 - 5x2)
     if (r.photos && r.photos.length > 0) {
-        const photos = r.photos.slice(0, 15);
+        const photos = r.photos.slice(0, 10);
         document.getElementById('modalPhotos').innerHTML = `
             <div class="photos-grid">
                 ${photos.map((p, i) => `<img src="${p}" onclick="openGallery(${JSON.stringify(photos).replace(/"/g, '&quot;')}, ${i}, '공식 사진')">`).join('')}
@@ -500,38 +601,44 @@ function openModal(id) {
     // Reviews with pagination
     renderReviews();
     
+    // 지도 링크
     const gmapsUrl = r.url || `https://www.google.com/maps/search/${encodeURIComponent(r.name + ' 서울')}`;
     document.getElementById('modalGmaps').href = gmapsUrl;
     
-    const websiteBtn = document.getElementById('modalWebsite');
-    if (r.website) {
-        websiteBtn.href = r.website;
-        websiteBtn.style.display = 'flex';
-    } else {
-        websiteBtn.style.display = 'none';
-    }
+    // 네이버 지도 링크
+    const nmapUrl = `https://map.naver.com/v5/search/${encodeURIComponent(r.name + ' ' + extractDistrict(r.address))}`;
+    document.getElementById('modalNmap').href = nmapUrl;
     
     document.getElementById('modal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
+// REVIEWS 객체에서 리뷰 가져오기 (reviews.js 분리 대응)
+function getReviewsList(r) {
+    if (typeof REVIEWS !== 'undefined' && REVIEWS[r.id]) {
+        return REVIEWS[r.id];
+    }
+    return r.reviewsList || [];
+}
+
 function renderReviewSummary(r) {
     const container = document.getElementById('modalReviewSummary');
+    const reviewsList = getReviewsList(r);
     
-    if (!r.reviewsList || r.reviewsList.length === 0) {
+    if (!reviewsList || reviewsList.length === 0) {
         container.innerHTML = '<span class="no-data">리뷰 데이터 수집 예정</span>';
         return;
     }
     
     // 별점별 개수 계산
     const distribution = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0};
-    r.reviewsList.forEach(rev => {
+    reviewsList.forEach(rev => {
         const star = Math.round(rev.rating);
         if (star >= 1 && star <= 5) distribution[star]++;
     });
     
-    const total = r.reviewsList.length;
-    const avgRating = r.rating || (r.reviewsList.reduce((sum, rev) => sum + rev.rating, 0) / total);
+    const total = reviewsList.length;
+    const avgRating = r.rating || (reviewsList.reduce((sum, rev) => sum + rev.rating, 0) / total);
     
     // 히스토그램 HTML 생성
     let histogramHTML = '';
@@ -567,19 +674,20 @@ function renderReviews() {
     const r = currentRestaurant;
     const reviewTotalEl = document.getElementById('reviewTotal');
     const reviewPageInfoEl = document.getElementById('reviewPageInfo');
+    const reviewsList = r ? getReviewsList(r) : [];
     
-    if (!r || !r.reviewsList || r.reviewsList.length === 0) {
+    if (!r || !reviewsList || reviewsList.length === 0) {
         if (reviewTotalEl) reviewTotalEl.textContent = '';
         if (reviewPageInfoEl) reviewPageInfoEl.textContent = '';
         document.getElementById('modalReviewsList').innerHTML = '<span class="no-data">💬 리뷰 데이터 수집 예정</span>';
         return;
     }
     
-    const totalReviews = r.reviewsList.length;
+    const totalReviews = reviewsList.length;
     const totalPages = Math.ceil(totalReviews / REVIEWS_PER_PAGE);
     const startIdx = (currentReviewPage - 1) * REVIEWS_PER_PAGE;
     const endIdx = Math.min(startIdx + REVIEWS_PER_PAGE, totalReviews);
-    const pageReviews = r.reviewsList.slice(startIdx, endIdx);
+    const pageReviews = reviewsList.slice(startIdx, endIdx);
     
     // 총 리뷰 수 표시
     if (reviewTotalEl) reviewTotalEl.textContent = `- ${totalReviews} reviews`;
@@ -631,7 +739,8 @@ function renderReviews() {
 }
 
 function changeReviewPage(page) {
-    const totalPages = Math.ceil(currentRestaurant.reviewsList.length / REVIEWS_PER_PAGE);
+    const reviewsList = getReviewsList(currentRestaurant);
+    const totalPages = Math.ceil(reviewsList.length / REVIEWS_PER_PAGE);
     if (page < 1 || page > totalPages) return;
     currentReviewPage = page;
     renderReviews();

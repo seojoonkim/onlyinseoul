@@ -827,7 +827,7 @@ body {
 
 .info-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     padding: 10px 0;
 }
 
@@ -839,9 +839,77 @@ body {
     color: var(--text-tertiary);
     width: 50px;
     flex-shrink: 0;
+    padding-top: 1px;
 }
 
-.info-value { font-size: 13px; font-weight: 500; color: var(--text-primary); flex: 1; }
+.info-value { font-size: 13px; font-weight: 500; color: var(--text-primary); flex: 1; line-height: 1.5; }
+
+/* 운영시간 섹션 */
+.hours-section {
+    align-items: flex-start !important;
+}
+
+.hours-table {
+    flex: 1;
+}
+
+.hours-grid {
+    display: flex;
+    gap: 3px;
+    background: var(--bg-secondary);
+    padding: 0px;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.hours-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3px 1px;
+    border-radius: 8px;
+    background: var(--bg-primary);
+    min-width: 44px;
+    gap: 3px;
+}
+
+.hours-col.today {
+    background: #ecfdf5;
+    border: 2px solid #10b981;
+}
+
+.hours-col.closed {
+    opacity: 0.6;
+}
+
+.hours-day {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.hours-col.today .hours-day {
+    color: #10b981;
+}
+
+.hours-open, .hours-close {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.hours-divider {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    line-height: 1;
+}
+
+.hours-closed {
+    font-size: 11px;
+    font-weight: 600;
+    color: #ef4444;
+    margin-top: 4px;
+}
 
 .info-value .call-btn {
     margin-left: 8px;
@@ -870,7 +938,7 @@ body {
 /* Photos Grid */
 .photos-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 6px;
 }
 
@@ -926,6 +994,7 @@ body {
 
 .action-btn.primary { background: var(--accent-gradient); color: #fff; }
 .action-btn.secondary { background: var(--bg-tertiary); color: var(--text-secondary); }
+.action-btn.naver { background: linear-gradient(135deg, #03c75a 0%, #00b843 100%); color: #fff; }
 
 /* Reviews Container */
 .reviews-container {
@@ -940,10 +1009,12 @@ body {
 }
 
 .review-card {
-    background: var(--bg-tertiary);
+    background: linear-gradient(135deg, #fdfbfb 0%, #f7f4fc 50%, #f0f4ff 100%);
     padding: 14px;
     border-radius: var(--radius-sm);
     text-align: left;
+    border: 1px solid rgba(139, 92, 246, 0.08);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.04);
 }
 
 .review-header {
@@ -1073,7 +1144,7 @@ body {
     }
     
     .photos-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
     }
     
     .modal-header {
