@@ -431,6 +431,14 @@ function openModal(id) {
     const item = allData.find(d => d.id === id);
     if (!item) return;
     
+    // 스크롤 최상단으로 리셋
+    const modalOverlay = document.getElementById('modal');
+    const leftCol = document.querySelector('.modal-col-left');
+    const rightCol = document.querySelector('.modal-col-right');
+    if (modalOverlay) modalOverlay.scrollTop = 0;
+    if (leftCol) leftCol.scrollTop = 0;
+    if (rightCol) rightCol.scrollTop = 0;
+    
     const cat = categoryInfo[item.category] || {};
     
     // 헤더
@@ -487,11 +495,15 @@ function openModal(id) {
     
     // 팁
     const tipsEl = document.getElementById('modalTips');
+    const tipsRightEl = document.getElementById('modalTipsRight');
     if (tipsEl) {
         if (item.tips && item.tips.length > 0) {
-            tipsEl.innerHTML = item.tips.map(tip => `<li>${tip}</li>`).join('');
+            const tipsHTML = item.tips.map(tip => `<li>${tip}</li>`).join('');
+            tipsEl.innerHTML = tipsHTML;
+            if (tipsRightEl) tipsRightEl.innerHTML = tipsHTML;
         } else {
             tipsEl.innerHTML = '<li>등록된 팁이 없습니다.</li>';
+            if (tipsRightEl) tipsRightEl.innerHTML = '<li>등록된 팁이 없습니다.</li>';
         }
     }
     
@@ -602,8 +614,33 @@ function openModal(id) {
     document.getElementById('modal').classList.add('active');
     document.body.style.overflow = 'hidden';
     
-    // sticky 감지 설정
-    setTimeout(() => setupStickyObserver(), 100);
+    // 팁 위치 조절 및 sticky 감지 설정
+    setTimeout(() => {
+        adjustTipsPosition();
+        setupStickyObserver();
+    }, 100);
+}
+
+// 세로 해상도에 따라 방문 팁 위치 조절
+function adjustTipsPosition() {
+    const leftCol = document.querySelector('.modal-col-left');
+    const tipsLeftSection = document.getElementById('tipsLeftSection');
+    const tipsRightSection = document.getElementById('tipsRightSection');
+    const modal = document.querySelector('.modal');
+    
+    if (!leftCol || !tipsLeftSection || !tipsRightSection || !modal) return;
+    
+    const modalHeight = modal.offsetHeight;
+    const leftContentHeight = leftCol.scrollHeight;
+    
+    // 왼쪽 컨텐츠가 모달 높이보다 크면 (스크롤 생길 것 같으면)
+    if (leftContentHeight > modalHeight - 60) { // 60 = header height
+        tipsLeftSection.style.display = 'none';
+        tipsRightSection.style.display = 'block';
+    } else {
+        tipsLeftSection.style.display = 'block';
+        tipsRightSection.style.display = 'none';
+    }
 }
 
 // 모달 닫기
