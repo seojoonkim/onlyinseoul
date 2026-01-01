@@ -294,7 +294,7 @@ body[data-lang="en"] {
 }
 
 .landmark-table th {
-    padding: 12px 16px;
+    padding: 12px 6px;
     text-align: left;
     font-size: 12px;
     font-weight: 600;
@@ -337,7 +337,7 @@ body[data-lang="en"] {
     font-size: 13px;
 }
 
-.col-rank { width: 36px; text-align: center; }
+.col-rank { width: 36px; text-align: center !important; }
 .col-photo { width: 1%; white-space: nowrap; } /* 콘텐츠(사진) 크기만큼만 */
 .col-name { width: 160px; }
 .col-category { width: 100px; }
