@@ -198,7 +198,8 @@ body[data-lang="en"] {
     align-items: center;
 }
 
-.filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-group { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+#scoreFilters { margin-top: 8px; }
 
 .filter-btn {
     padding: 6px 8px;
@@ -321,7 +322,7 @@ body[data-lang="en"] {
 .col-name { width: 160px; }
 .col-category { width: 100px; }
 .col-location { width: 80px; }
-.col-duration { width: 80px; }
+.col-duration { width: 80px; white-space: nowrap; }
 .col-admission { width: 100px; }
 .col-score { width: 50px; text-align: center !important; }
 .col-popularity { width: 50px; text-align: center !important; white-space: nowrap; }
