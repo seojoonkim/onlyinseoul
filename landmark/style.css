@@ -385,6 +385,10 @@ body[data-lang="en"] {
     font-weight: 600;
     color: var(--text-primary);
     word-break: keep-all;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
 }
 
 .cell-duration {
@@ -416,8 +420,8 @@ body[data-lang="en"] {
     border-radius: 8px;
     font-size: 9px;
     font-weight: 600;
-    margin-left: 6px;
     vertical-align: middle;
+    flex-shrink: 0;
 }
 
 .cell-category-mobile.palace { background: var(--palace-bg); color: #c62828; }
