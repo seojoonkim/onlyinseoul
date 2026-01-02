@@ -128,7 +128,7 @@
                 <!-- Left Column -->
                 <div class="modal-col-left">
                     <div class="modal-section">
-                        <h3>📍 소개</h3>
+                        <h3>✨ 소개</h3>
                         <div class="intro-box">
                             <p class="intro-summary" id="modalSummary"></p>
                         </div>
@@ -139,11 +139,6 @@
                         <div class="gallery-grid" id="modalGallery"></div>
                     </div>
                     
-                    <div class="modal-section tips-section-left" id="tipsLeftSection">
-                        <h3>💡 방문 팁</h3>
-                        <ul class="tips-list" id="modalTips"></ul>
-                    </div>
-                    
                     <div class="modal-section">
                         <h3>🕐 운영 정보</h3>
                         <div class="info-grid">
@@ -151,8 +146,21 @@
                             <div class="info-item"><span class="info-label">운영시간</span><span class="info-value" id="modalHours">-</span></div>
                             <div class="info-item"><span class="info-label">휴무일</span><span class="info-value" id="modalClosed">-</span></div>
                             <div class="info-item"><span class="info-label">소요시간</span><span class="info-value" id="modalDuration">-</span></div>
-                            <div class="info-item"><span class="info-label">위치</span><span class="info-value" id="modalDistrict">-</span></div>
                             <div class="info-item"><span class="info-label">가까운역</span><span class="info-value" id="modalStation">-</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-section">
+                        <h3>📍 주소</h3>
+                        <div class="address-item">
+                            <span class="address-tag" id="labelRoadAddress">도로명</span>
+                            <span class="address-text" id="modalRoadAddress">-</span>
+                            <button class="copy-btn" onclick="copyAddress('road')">복사</button>
+                        </div>
+                        <div class="address-item">
+                            <span class="address-tag" id="labelJibunAddress">지번</span>
+                            <span class="address-text" id="modalJibunAddress">-</span>
+                            <button class="copy-btn" onclick="copyAddress('jibun')">복사</button>
                         </div>
                         <div class="modal-actions">
                             <a class="action-btn google" id="modalGoogleMap" href="#" target="_blank">
@@ -160,9 +168,6 @@
                             </a>
                             <a class="action-btn naver" id="modalNaverMap" href="#" target="_blank">
                                 <img src="https://www.naver.com/favicon.ico" alt="" class="btn-favicon"> 네이버지도
-                            </a>
-                            <a class="action-btn kakao" id="modalKakaoMap" href="#" target="_blank">
-                                <img src="https://www.kakaocorp.com/page/favicon.ico" alt="" class="btn-favicon"> 카카오맵
                             </a>
                         </div>
                     </div>
@@ -175,14 +180,16 @@
                         <div class="popularity-section" id="modalPopularity"></div>
                     </div>
                     
-                    <div class="modal-section">
-                        <h3>📖 상세 설명</h3>
-                        <p class="detail-description" id="modalDescription"></p>
-                    </div>
-                    
-                    <div class="modal-section tips-section-right" id="tipsRightSection" style="display: none;">
-                        <h3>💡 방문 팁</h3>
-                        <ul class="tips-list" id="modalTipsRight"></ul>
+                    <div class="desc-tips-row">
+                        <div class="modal-section desc-section">
+                            <h3>📖 상세 설명</h3>
+                            <p class="detail-description" id="modalDescription"></p>
+                        </div>
+                        
+                        <div class="modal-section tips-section" id="tipsSection">
+                            <h3>💡 방문 팁</h3>
+                            <ul class="tips-list" id="modalTips"></ul>
+                        </div>
                     </div>
                     
                     <div class="score-summary-section" id="scoreSummarySection">

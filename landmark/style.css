@@ -201,6 +201,26 @@ body[data-lang="en"] {
 .filter-group { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
 #scoreFilters { margin-top: 8px; }
 
+/* 주소 섹션 */
+.address-section {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.address-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+}
+
+.address-value {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 6px 0 0 0;
+    line-height: 1.5;
+}
+
 .filter-btn {
     padding: 6px 8px;
     border: 1px solid var(--border);
@@ -677,7 +697,7 @@ body[data-lang="en"] {
 }
 
 .modal-section {
-    margin-bottom: 24px;
+    margin-bottom: 30px;
 }
 
 .modal-section:last-child {
@@ -768,6 +788,58 @@ body[data-lang="en"] {
     color: var(--text-primary);
 }
 
+/* Detail Address */
+.address-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+}
+
+.address-tag {
+    flex-shrink: 0;
+    width: 45px;
+    text-align: center;
+    padding: 3px 8px;
+    background: #f1f5f9;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.address-text {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.copy-btn {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.copy-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #64748b;
+}
+
+.copy-btn.copied {
+    background: #dcfce7;
+    border-color: #86efac;
+    color: #16a34a;
+}
+
 /* Modal Actions - 3개 버튼 */
 .modal-actions {
     display: flex;
@@ -777,7 +849,7 @@ body[data-lang="en"] {
 
 .action-btn {
     flex: 1;
-    padding: 10px 8px;
+    padding: 12px 8px;
     border-radius: 8px;
     border: none;
     font-size: 12px;
@@ -798,9 +870,9 @@ body[data-lang="en"] {
 .action-btn:hover { opacity: 0.9; transform: translateY(-1px); }
 
 .btn-favicon {
-    width: 16px;
-    height: 16px;
-    border-radius: 2px;
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
 }
 
 /* Scores Grid - 2컬럼 컴팩트 */
@@ -967,7 +1039,7 @@ body[data-lang="en"] {
     }
 }
 
-.modal-section { margin-bottom: 24px; }
+.modal-section { margin-bottom: 30px; }
 .modal-section:last-child { margin-bottom: 0; }
 
 .modal-section h3 {
@@ -1233,6 +1305,12 @@ body[data-lang="en"] {
         grid-template-columns: 1fr;
     }
     
+    /* 상세설명 + 방문팁 상하 배치 */
+    .desc-tips-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
     /* 헤더: 타이틀 크게, 언어 버튼 작게 */
     .lang-btn {
         padding: 2px 4px;
@@ -1261,7 +1339,7 @@ body[data-lang="en"] {
     .popularity-track { width: 45px; }
     .popularity-bar { gap: 6px; }
     
-    .cell-photo { width: 48px; height: 44px; font-size: 16px; }
+    .cell-photo { width: 60px; height: 52px; font-size: 16px; }
     .cell-name { font-size: 14px; }
     .cell-category { font-size: 10px; padding: 3px 6px; }
     
@@ -1330,7 +1408,7 @@ body[data-lang="en"] {
 @media (max-width: 600px) {
     /* 테이블 셀 패딩 축소 */
     .landmark-table td {
-        padding: 7px 4px;
+        padding: 6px 3px;
     }
     
     /* 카테고리 컬럼 숨기기 */
@@ -1403,9 +1481,23 @@ body[data-lang="en"] {
     font-size: 20px;
 }
 
+/* 상세 설명 + 방문 팁 나란히 */
+.desc-tips-row {
+    display: flex;
+    gap: 28px;
+}
+
+.desc-tips-row .desc-section {
+    flex: 1.5;
+}
+
+.desc-tips-row .tips-section {
+    flex: 1;
+}
+
 /* 상세 설명 */
 .detail-description {
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.6;
     color: var(--text-secondary);
 }
@@ -1616,7 +1708,7 @@ body[data-lang="en"] {
     background: var(--bg-secondary);
     margin: 0 -24px;
     padding: 16px 24px;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     transition: box-shadow 0.2s ease;
 }
 
@@ -1627,7 +1719,7 @@ body[data-lang="en"] {
 @media (max-width: 768px) {
     .score-summary-section {
         top: 0px;
-        margin-bottom: 56px;
+        margin-bottom: 30px;
     }
 }
 

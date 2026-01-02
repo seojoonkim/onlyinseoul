@@ -980,8 +980,19 @@ function openModal(id) {
     document.getElementById('modalHours').textContent = getItemHours(item) || '-';
     document.getElementById('modalClosed').textContent = translateClosed(item.closed) || '-';
     document.getElementById('modalDuration').textContent = translateDuration(item.duration) || '-';
-    document.getElementById('modalDistrict').textContent = translateDistrict(item.district) || '-';
     document.getElementById('modalStation').textContent = translateStation(item.nearest_station) || '-';
+    
+    // 주소: 한국어는 한국어 DB, 그 외(영어/중국어/일본어)는 영어 DB에서 가져옴
+    const isKorean = lang === 'ko';
+    if (isKorean) {
+        document.getElementById('modalRoadAddress').textContent = item.road_address || '-';
+        document.getElementById('modalJibunAddress').textContent = item.jibun_address || '-';
+    } else {
+        // 영어 DB에서 주소 가져오기
+        const enItem = (typeof landmarkData_en !== 'undefined' ? landmarkData_en : []).find(d => d.id === item.id);
+        document.getElementById('modalRoadAddress').textContent = enItem?.road_address || '-';
+        document.getElementById('modalJibunAddress').textContent = enItem?.jibun_address || '-';
+    }
     
     document.getElementById('modalSummary').textContent = getItemSummary(item) || '';
     document.getElementById('modalDescription').textContent = getItemDescription(item) || '';
@@ -992,36 +1003,40 @@ function openModal(id) {
     renderScoreSummary(item);
     renderScoreDetails(item, lang);
     
-    const encodedName = encodeURIComponent(item.name_ko);
-    const encodedNameEn = encodeURIComponent(item.name_en || item.name_ko);
-    document.getElementById('modalGoogleMap').href = `https://www.google.com/maps/search/${encodedNameEn}+Seoul`;
-    document.getElementById('modalNaverMap').href = `https://map.naver.com/v5/search/${encodedName}`;
-    document.getElementById('modalKakaoMap').href = `https://map.kakao.com/?q=${encodedName}`;
+    // 지도 검색 - 한국어는 한국어 이름, 그 외는 영어 이름으로 검색
+    const searchName = isKorean ? item.name : (item.name_en || item.name);
+    const searchCity = isKorean ? '서울' : 'Seoul';
+    const googleQuery = encodeURIComponent(searchName + ' ' + searchCity);
+    const naverQuery = encodeURIComponent(isKorean ? item.name : (item.name_en || item.name));
     
+    document.getElementById('modalGoogleMap').href = `https://www.google.com/maps/search/?api=1&query=${googleQuery}`;
+    document.getElementById('modalNaverMap').href = `https://map.naver.com/v5/search/${naverQuery}`;
+    
+    // 로고 + 서비스명
     const mapLabels = {
-        ko: { google: '구글맵', naver: '네이버지도', kakao: '카카오맵' },
-        en: { google: 'Google Maps', naver: 'Naver Map', kakao: 'Kakao Map' },
-        zh: { google: '谷歌地图', naver: 'Naver地图', kakao: 'Kakao地图' },
-        ja: { google: 'Googleマップ', naver: 'Naverマップ', kakao: 'Kakaoマップ' }
+        ko: { google: '구글맵', naver: '네이버지도' },
+        en: { google: 'Google Maps', naver: 'Naver Map' },
+        zh: { google: '谷歌地图', naver: 'Naver地图' },
+        ja: { google: 'Googleマップ', naver: 'Naverマップ' }
     };
     const mL = mapLabels[lang] || mapLabels.ko;
     document.querySelector('#modalGoogleMap').innerHTML = `<img src="https://www.google.com/favicon.ico" alt="" class="btn-favicon"> ${mL.google}`;
     document.querySelector('#modalNaverMap').innerHTML = `<img src="https://www.naver.com/favicon.ico" alt="" class="btn-favicon"> ${mL.naver}`;
-    document.querySelector('#modalKakaoMap').innerHTML = `<img src="https://www.kakaocorp.com/page/favicon.ico" alt="" class="btn-favicon"> ${mL.kakao}`;
     
     document.getElementById('modal').classList.add('active');
     document.body.style.overflow = 'hidden';
     
-    setTimeout(() => { adjustTipsPosition(); setupStickyObserver(); }, 100);
+    setTimeout(() => { setupStickyObserver(); }, 100);
 }
 
 function updateModalTitles(lang) {
     // 모든 섹션 h3 태그 직접 업데이트
     const titles = {
-        intro: { ko: '📍 소개', en: '📍 INTRODUCTION', zh: '📍 简介', ja: '📍 紹介' },
+        intro: { ko: '✨ 소개', en: '✨ INTRODUCTION', zh: '✨ 简介', ja: '✨ 紹介' },
         photos: { ko: '📷 사진', en: '📷 PHOTOS', zh: '📷 照片', ja: '📷 写真' },
         tips: { ko: '💡 방문 팁', en: '💡 VISITOR TIPS', zh: '💡 游览攻略', ja: '💡 訪問のヒント' },
         info: { ko: '🕐 운영 정보', en: '🕐 INFORMATION', zh: '🕐 运营信息', ja: '🕐 営業情報' },
+        address: { ko: '📍 주소', en: '📍 ADDRESS', zh: '📍 地址', ja: '📍 住所' },
         popularity: { ko: '🔥 인기도', en: '🔥 POPULARITY', zh: '🔥 人气指数', ja: '🔥 人気度' },
         desc: { ko: '📖 상세 설명', en: '📖 DESCRIPTION', zh: '📖 详细介绍', ja: '📖 詳細説明' },
         scores: { ko: '📊 데이터 기반 점수', en: '📊 SCORES', zh: '📊 数据评分', ja: '📊 データスコア' },
@@ -1039,6 +1054,8 @@ function updateModalTitles(lang) {
             h3.textContent = titles.tips[lang] || titles.tips.ko;
         } else if (text.includes('운영') || text.includes('information') || text.includes('运营') || text.includes('営業')) {
             h3.textContent = titles.info[lang] || titles.info.ko;
+        } else if (text.includes('주소') || text.includes('address') || text.includes('地址') || text.includes('住所')) {
+            h3.textContent = titles.address[lang] || titles.address.ko;
         } else if (text.includes('인기도') || text.includes('popularity') || text.includes('人气') || text.includes('人気度')) {
             h3.textContent = titles.popularity[lang] || titles.popularity.ko;
         } else if ((text.includes('상세 설명') || text.includes('상세설명') || text.includes('详细介绍') || text.includes('詳細説明')) || (text.includes('description') && !text.includes('detailed') && !text.includes('evaluation'))) {
@@ -1052,13 +1069,34 @@ function updateModalTitles(lang) {
     
     const labels = document.querySelectorAll('.info-label');
     const labelTexts = {
-        ko: ['입장료', '운영시간', '휴무일', '소요시간', '위치', '가까운역'],
-        en: ['Admission', 'Hours', 'Closed', 'Duration', 'District', 'Nearest Station'],
-        zh: ['门票', '营业时间', '休息日', '游览时长', '位置', '最近地铁站'],
-        ja: ['入場料', '営業時間', '休館日', '所要時間', '位置', '最寄り駅']
+        ko: ['입장료', '운영시간', '휴무일', '소요시간', '가까운역'],
+        en: ['Admission', 'Hours', 'Closed', 'Duration', 'Nearest Station'],
+        zh: ['门票', '营业时间', '休息日', '游览时长', '最近地铁站'],
+        ja: ['入場料', '営業時間', '休館日', '所要時間', '最寄り駅']
     };
     const texts = labelTexts[lang] || labelTexts.ko;
     labels.forEach((label, i) => { if (texts[i]) label.textContent = texts[i]; });
+    
+    // 도로명/지번 태그 번역
+    const addressLabels = {
+        ko: { road: '도로명', jibun: '지번', copy: '복사', copied: '완료' },
+        en: { road: 'Street', jibun: 'Lot', copy: 'Copy', copied: 'Done' },
+        zh: { road: '道路名', jibun: '地番', copy: '复制', copied: '完成' },
+        ja: { road: '道路名', jibun: '地番', copy: 'コピー', copied: '完了' }
+    };
+    const addrL = addressLabels[lang] || addressLabels.ko;
+    const roadLabel = document.getElementById('labelRoadAddress');
+    const jibunLabel = document.getElementById('labelJibunAddress');
+    if (roadLabel) roadLabel.textContent = addrL.road;
+    if (jibunLabel) jibunLabel.textContent = addrL.jibun;
+    
+    // 복사 버튼 번역
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+        if (!btn.classList.contains('copied')) btn.textContent = addrL.copy;
+    });
+    
+    // 복사 함수용 전역 변수 저장
+    window.copyLabels = addrL;
 }
 
 function loadGallery(item, displayName) {
@@ -1099,14 +1137,19 @@ function renderGalleryThumbs(container, loadedPhotos, name) {
 
 function loadTips(item, lang) {
     const tipsEl = document.getElementById('modalTips');
-    const tipsRightEl = document.getElementById('modalTipsRight');
     const tips = getItemTips(item);
-    const noTipsMsg = lang === 'en' ? 'No tips available.' : '등록된 팁이 없습니다.';
+    const noTipsMsg = {
+        ko: '등록된 팁이 없습니다.',
+        en: 'No tips available.',
+        zh: '暂无提示信息。',
+        ja: 'ヒントがありません。'
+    };
     
     if (tipsEl) {
-        const html = tips && tips.length > 0 ? tips.map(tip => `<li>${tip}</li>`).join('') : `<li>${noTipsMsg}</li>`;
+        const html = tips && tips.length > 0 
+            ? tips.map(tip => `<li>${tip}</li>`).join('') 
+            : `<li>${noTipsMsg[lang] || noTipsMsg.ko}</li>`;
         tipsEl.innerHTML = html;
-        if (tipsRightEl) tipsRightEl.innerHTML = html;
     }
 }
 
@@ -1207,25 +1250,29 @@ function renderScoreDetails(item, lang) {
     }).join('');
 }
 
-function adjustTipsPosition() {
-    const leftCol = document.querySelector('.modal-col-left');
-    const tipsLeft = document.getElementById('tipsLeftSection');
-    const tipsRight = document.getElementById('tipsRightSection');
-    const modal = document.querySelector('.modal');
-    if (!leftCol || !tipsLeft || !tipsRight || !modal) return;
-    
-    if (leftCol.scrollHeight > modal.offsetHeight - 60) {
-        tipsLeft.style.display = 'none';
-        tipsRight.style.display = 'block';
-    } else {
-        tipsLeft.style.display = 'block';
-        tipsRight.style.display = 'none';
-    }
-}
-
 function closeModal() {
     document.getElementById('modal')?.classList.remove('active');
     document.body.style.overflow = '';
+}
+
+function copyAddress(type) {
+    const el = type === 'road' ? document.getElementById('modalRoadAddress') : document.getElementById('modalJibunAddress');
+    const text = el?.textContent;
+    if (!text || text === '-') return;
+    
+    const labels = window.copyLabels || { copy: '복사', copied: '완료' };
+    
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = el.parentElement.querySelector('.copy-btn');
+        if (btn) {
+            btn.classList.add('copied');
+            btn.textContent = labels.copied;
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.textContent = labels.copy;
+            }, 1500);
+        }
+    });
 }
 
 function scrollToScoreDetail(key) {
